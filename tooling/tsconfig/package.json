@@ -1,0 +1,12 @@
+{
+  "name": "@happy/tsconfig",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "bun-types": "^1.1.29"
+  },
+  "files": [
+    "base.json",
+    "react-library.json"
+  ]
+}
