@@ -2,7 +2,6 @@ node_modules
 *.local.pnp
 .pnp.js
 coverage
-cache
 .next/
 out/
 build
@@ -24,3 +23,7 @@ lerna-debug.log*
 .turbo
 .vercel
 .netlify
+cache/
+!/broadcast
+/broadcast/*/31337/
+/broadcast/**/dry-run/
