@@ -10,23 +10,24 @@ Connector to provide end-to-end type safety between front-end apps and the [Elys
 
 ### Installation
 
-In your project folder: 
+In your project folder:
 
 1. Add `"@happy/connector": "workspace:*"` to the `devDependecies` of your `package.json` (ensure `@happy/tailwind` and its dependencies are also installed as `devDepencies`).
 
-
 ### Use the connector
 
-1. Import the component you need
+1. Create the connector
 
-```tsx
-import { api } from '@happy/connector'
+```ts
+import { createApiConnector } from "@happy/connector";
+
+const apiClient = createApiConnector("<backend endpoint>");
 ```
 
-2. Use it in your template
+2. Use it in your code
 
-```tsx
-const { data, error } = await app.ping.get()
+```ts
+const { data, error } = await app.ping.get(); // `GET  <backend endpoint>/ping`
 ```
 
 > Refer to `apps/backend` for complete API routes reference.
