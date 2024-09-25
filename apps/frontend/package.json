@@ -1,0 +1,36 @@
+{
+  "name": "@happy/frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "dev": "vite --port=5173",
+    "build": "vite build",
+    "serve": "vite preview",
+    "start": "vite"
+  },
+  "devDependencies": {
+    "@happy/tailwind": "workspace:^",
+    "@tanstack/router-plugin": "^1.58.4",
+    "@types/react": "^18.3.9",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.13",
+    "vite": "^5.4.8"
+  },
+  "dependencies": {
+    "@happy/connector": "workspace:^",
+    "@happy/uikit-react": "workspace:^",
+    "@happy/chains": "workspace:^",
+    "@tanstack/react-query": "^5.56.2",
+    "@tanstack/react-router": "^1.58.9",
+    "@tanstack/router-devtools": "^1.58.9",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "viem": "2.x",
+    "wagmi": "^2.12.14"
+  }
+}
