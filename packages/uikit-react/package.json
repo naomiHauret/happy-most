@@ -1,0 +1,26 @@
+{
+  "name": "@happy/uikit-react",
+  "private": true,
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "version": "0.1.0",
+  "types": "./src/index.ts",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./fonts.css": "./src/fonts.css"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@ark-ui/react": "^3.13.0",
+    "class-variance-authority": "^0.7.0",
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@happy/tailwind": "workspace:*",
+    "@happy/tsconfig": "workspace:*",
+    "@types/react": "^18.3.9",
+    "typescript": "^5.6.2"
+  }
+}
