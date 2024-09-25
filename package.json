@@ -1,0 +1,11 @@
+{
+  "name": "happy",
+  "version": "1.0.0",
+  "description": "Monorepo for Happy chain front-end assignment.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Naomi Hauret",
+  "license": "MIT"
+}
