@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Monorepo for Happy chain front-end assignment.",
   "scripts": {
-    "dev": "pnpm run --parallel dev"
+    "dev": "pnpm run --parallel dev",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json,js,jsx,astro,css}\""
   },
   "keywords": [],
   "author": "Naomi Hauret",
