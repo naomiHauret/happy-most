@@ -1,0 +1,19 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+build_info = true
+extra_output = ["storageLayout"]
+remappings = [
+  '@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/'
+]
+
+[rpc_endpoints]
+op_sepolia = "https://sepolia.optimism.io"
+happychain_sepolia = "https://happy-testnet-sepolia.rpc.caldera.xyz/http"
+base_sepolia = "https://base-sepolia-rpc.publicnode.com"
+
+
+# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
+
+

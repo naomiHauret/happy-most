@@ -1,0 +1,10 @@
+{
+  "name": "@happy/contracts",
+  "version": "1.0.0",
+  "scripts": {
+    "abi:gen": "cd foundry && forge inspect src/SimpleERC20.sol:SimpleERC20 abi > simpleERC20Abi.json",
+    "tokens:deploy": "cd foundry && forge script foundry/script/List.s.sol:Deploy --broadcast"
+  },
+  "author": "Naomi Hauret",
+  "license": "MIT"
+}
