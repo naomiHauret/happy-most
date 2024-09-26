@@ -1,17 +1,8 @@
 const format = require('../format-lines');
-const { capitalize } = require('../../helpers');
-
-const TYPES = [
-  { type: 'address', isValueType: true },
-  { type: 'bool', isValueType: true, name: 'Boolean' },
-  { type: 'bytes32', isValueType: true },
-  { type: 'uint256', isValueType: true },
-  { type: 'string', isValueType: false },
-  { type: 'bytes', isValueType: false },
-].map(type => Object.assign(type, { struct: (type.name ?? capitalize(type.type)) + 'Slot' }));
+const { TYPES } = require('./Slot.opts');
 
 const header = `\
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.24;
 
 /**
  * @dev Library for reading and writing primitive types to specific storage slots.
@@ -21,9 +12,10 @@ pragma solidity ^0.8.20;
  *
  * The functions in this library return Slot structs that contain a \`value\` member that can be used to read or write.
  *
- * Example usage to set ERC1967 implementation slot:
+ * Example usage to set ERC-1967 implementation slot:
  * \`\`\`solidity
  * contract ERC1967 {
+ *     // Define the slot. Alternatively, use the SlotDerivation library to derive the slot.
  *     bytes32 internal constant _IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
  *
  *     function _getImplementation() internal view returns (address) {
@@ -36,36 +28,90 @@ pragma solidity ^0.8.20;
  *     }
  * }
  * \`\`\`
+ *
+ * Since version 5.1, this library also support writing and reading value types to and from transient storage.
+ *
+ *  * Example using transient storage:
+ * \`\`\`solidity
+ * contract Lock {
+ *     // Define the slot. Alternatively, use the SlotDerivation library to derive the slot.
+ *     bytes32 internal constant _LOCK_SLOT = 0xf4678858b2b588224636b8522b729e7722d32fc491da849ed75b3fdf3c84f542;
+ *
+ *     modifier locked() {
+ *         require(!_LOCK_SLOT.asBoolean().tload());
+ *
+ *         _LOCK_SLOT.asBoolean().tstore(true);
+ *         _;
+ *         _LOCK_SLOT.asBoolean().tstore(false);
+ *     }
+ * }
+ * \`\`\`
+ *
+ * TIP: Consider using this library along with {SlotDerivation}.
  */
 `;
 
-const struct = type => `\
-struct ${type.struct} {
-  ${type.type} value;
+const struct = ({ type, name }) => `\
+struct ${name}Slot {
+    ${type} value;
 }
 `;
 
-const get = type => `\
+const get = ({ name }) => `\
 /**
- * @dev Returns an \`${type.struct}\` with member \`value\` located at \`slot\`.
+ * @dev Returns ${
+   name.toLowerCase().startsWith('a') ? 'an' : 'a'
+ } \`${name}Slot\` with member \`value\` located at \`slot\`.
  */
-function get${type.struct}(bytes32 slot) internal pure returns (${type.struct} storage r) {
-  /// @solidity memory-safe-assembly
-  assembly {
-      r.slot := slot
-  }
+function get${name}Slot(bytes32 slot) internal pure returns (${name}Slot storage r) {
+    assembly ("memory-safe") {
+        r.slot := slot
+    }
 }
 `;
 
-const getStorage = type => `\
+const getStorage = ({ type, name }) => `\
 /**
- * @dev Returns an \`${type.struct}\` representation of the ${type.type} storage pointer \`store\`.
+ * @dev Returns an \`${name}Slot\` representation of the ${type} storage pointer \`store\`.
  */
-function get${type.struct}(${type.type} storage store) internal pure returns (${type.struct} storage r) {
-  /// @solidity memory-safe-assembly
-  assembly {
-      r.slot := store.slot
-  }
+function get${name}Slot(${type} storage store) internal pure returns (${name}Slot storage r) {
+    assembly ("memory-safe") {
+        r.slot := store.slot
+    }
+}
+`;
+
+const udvt = ({ type, name }) => `\
+/**
+ * @dev UDVT that represent a slot holding a ${type}.
+ */
+type ${name}SlotType is bytes32;
+
+/**
+ * @dev Cast an arbitrary slot to a ${name}SlotType.
+ */
+function as${name}(bytes32 slot) internal pure returns (${name}SlotType) {
+    return ${name}SlotType.wrap(slot);
+}
+`;
+
+const transient = ({ type, name }) => `\
+/**
+ * @dev Load the value held at location \`slot\` in transient storage.
+ */
+function tload(${name}SlotType slot) internal view returns (${type} value) {
+    assembly ("memory-safe") {
+        value := tload(slot)
+    }
+}
+
+/**
+ * @dev Store \`value\` at location \`slot\` in transient storage.
+ */
+function tstore(${name}SlotType slot, ${type} value) internal {
+    assembly ("memory-safe") {
+        tstore(slot, value)
+    }
 }
 `;
 
@@ -73,6 +119,13 @@ function get${type.struct}(${type.type} storage store) internal pure returns (${
 module.exports = format(
   header.trimEnd(),
   'library StorageSlot {',
-  [...TYPES.map(struct), ...TYPES.flatMap(type => [get(type), type.isValueType ? '' : getStorage(type)])],
+  format(
+    [].concat(
+      TYPES.map(type => struct(type)),
+      TYPES.flatMap(type => [get(type), !type.isValueType && getStorage(type)].filter(Boolean)),
+      TYPES.filter(type => type.isValueType).map(type => udvt(type)),
+      TYPES.filter(type => type.isValueType).map(type => transient(type)),
+    ),
+  ).trimEnd(),
   '}',
 );

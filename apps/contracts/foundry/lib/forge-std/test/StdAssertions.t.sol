@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.7.0 <0.9.0;
 
-import "../src/StdAssertions.sol";
+import {StdAssertions} from "../src/StdAssertions.sol";
 import {Vm} from "../src/Vm.sol";
 
 interface VmInternal is Vm {
@@ -18,8 +18,7 @@ contract StdAssertionsTest is StdAssertions {
     bool constant STRICT_REVERT_DATA = true;
     bool constant NON_STRICT_REVERT_DATA = false;
 
-    VmInternal constant vm =
-        VmInternal(address(uint160(uint256(keccak256("hevm cheat code")))));
+    VmInternal constant vm = VmInternal(address(uint160(uint256(keccak256("hevm cheat code")))));
 
     function testFuzz_AssertEqCall_Return_Pass(
         bytes memory callDataA,
@@ -48,10 +47,7 @@ contract StdAssertionsTest is StdAssertions {
         vm._expectCheatcodeRevert(
             bytes(
                 string.concat(
-                    "Call return data does not match: ",
-                    vm.toString(returnDataA),
-                    " != ",
-                    vm.toString(returnDataB)
+                    "Call return data does not match: ", vm.toString(returnDataA), " != ", vm.toString(returnDataB)
                 )
             )
         );
@@ -67,13 +63,7 @@ contract StdAssertionsTest is StdAssertions {
         address targetA = address(new TestMockCall(revertDataA, SHOULD_REVERT));
         address targetB = address(new TestMockCall(revertDataB, SHOULD_REVERT));
 
-        assertEqCall(
-            targetA,
-            callDataA,
-            targetB,
-            callDataB,
-            NON_STRICT_REVERT_DATA
-        );
+        assertEqCall(targetA, callDataA, targetB, callDataB, NON_STRICT_REVERT_DATA);
     }
 
     function testFuzz_RevertWhenCalled_AssertEqCall_Revert_Fail(
@@ -90,20 +80,11 @@ contract StdAssertionsTest is StdAssertions {
         vm._expectCheatcodeRevert(
             bytes(
                 string.concat(
-                    "Call revert data does not match: ",
-                    vm.toString(revertDataA),
-                    " != ",
-                    vm.toString(revertDataB)
+                    "Call revert data does not match: ", vm.toString(revertDataA), " != ", vm.toString(revertDataB)
                 )
             )
         );
-        assertEqCall(
-            targetA,
-            callDataA,
-            targetB,
-            callDataB,
-            STRICT_REVERT_DATA
-        );
+        assertEqCall(targetA, callDataA, targetB, callDataB, STRICT_REVERT_DATA);
     }
 
     function testFuzz_RevertWhenCalled_AssertEqCall_Fail(
@@ -117,22 +98,10 @@ contract StdAssertionsTest is StdAssertions {
         address targetB = address(new TestMockCall(returnDataB, SHOULD_REVERT));
 
         vm.expectRevert(bytes("assertion failed"));
-        this.assertEqCallExternal(
-            targetA,
-            callDataA,
-            targetB,
-            callDataB,
-            strictRevertData
-        );
+        this.assertEqCallExternal(targetA, callDataA, targetB, callDataB, strictRevertData);
 
         vm.expectRevert(bytes("assertion failed"));
-        this.assertEqCallExternal(
-            targetB,
-            callDataB,
-            targetA,
-            callDataA,
-            strictRevertData
-        );
+        this.assertEqCallExternal(targetB, callDataB, targetA, callDataA, strictRevertData);
     }
 
     // Helper function to test outcome of assertEqCall via `expect` cheatcodes

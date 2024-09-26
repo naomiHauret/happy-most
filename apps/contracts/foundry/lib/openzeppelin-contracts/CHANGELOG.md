@@ -1,5 +1,22 @@
 # Changelog
 
+### Breaking changes
+
+- `ERC1967Utils`: Removed duplicate declaration of the `Upgraded`, `AdminChanged` and `BeaconUpgraded` events. These events are still available through the `IERC1967` interface located under the `contracts/interfaces/` directory. Minimum pragma version is now 0.8.21.
+- `Governor`, `GovernorCountingSimple`: The `_countVotes` virtual function now returns an `uint256` with the total votes casted. This change allows for more flexibility for partial and fractional voting. Upgrading users may get a compilation error that can be fixed by adding a return statement to the `_countVotes` function.
+
+### Custom error changes
+
+This version comes with changes to the custom error identifiers. Contracts previously depending on the following errors should be replaced accordingly:
+
+- Replace `Address.FailedInnerCall` with `Errors.FailedCall`
+- Replace `Address.AddressInsufficientBalance` with `Errors.InsufficientBalance`
+- Replace `Clones.Create2InsufficientBalance` with `Errors.InsufficientBalance`
+- Replace `Clones.ERC1167FailedCreateClone` with `Errors.FailedDeployment`
+- Replace `Clones.Create2FailedDeployment` with `Errors.FailedDeployment`
+- `SafeERC20`: Replace `Address.AddressEmptyCode` with `SafeERC20FailedOperation` if there is no code at the token's address.
+- `SafeERC20`: Replace generic `Error(string)` with `SafeERC20FailedOperation` if the returned data can't be decoded as `bool`.
+- `SafeERC20`: Replace generic `SafeERC20FailedOperation` with the revert message from the contract call if it fails.
 
 ## 5.0.2 (2024-02-29)
 
@@ -58,7 +75,7 @@ These removals were implemented in the following PRs: [#3637](https://github.com
 #### General
 
 - Replaced revert strings and require statements with custom errors. ([#4261](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/4261))
-- Bumped minimum compiler version required to 0.8.20 ([#4288](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/4288))
+- Bumped minimum compiler version required to 0.8.20 ([#4288](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/4288), [#4489](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/4489))
 - Use of `abi.encodeCall` in place of `abi.encodeWithSelector` and `abi.encodeWithSignature` for improved type-checking of parameters ([#4293](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/4293))
 - Replaced some uses of `abi.encodePacked` with clearer alternatives (e.g. `bytes.concat`, `string.concat`). ([#4504](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/4504)) ([#4296](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/4296))
 - Overrides are now used internally for a number of functions that were previously hardcoded to their default implementation in certain locations: `ERC1155Supply.totalSupply`, `ERC721.ownerOf`, `ERC721.balanceOf` and `ERC721.totalSupply` in `ERC721Enumerable`, `ERC20.totalSupply` in `ERC20FlashMint`, and `ERC1967._getImplementation` in `ERC1967Proxy`. ([#4299](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/4299))
@@ -196,7 +213,7 @@ Batch transfers will now emit `TransferSingle` if the batch consists of a single
 
 #### ERC165Storage
 
-Users that were registering EIP-165 interfaces with `_registerInterface` from `ERC165Storage` should instead do so so by overriding the `supportsInterface` function as seen below:
+Users that were registering EIP-165 interfaces with `_registerInterface` from `ERC165Storage` should instead do so by overriding the `supportsInterface` function as seen below:
 
 ```solidity
 function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
@@ -282,6 +299,19 @@ Instead, contracts now revert with custom errors. Systems that interact with sma
 ##### Relying on storage locations for retrieving data
 
 After 5.0, the storage location of some variables were changed. This is the case for `Initializable` and all the upgradeable contracts since they now use namespaced storaged locations. Any system relying on storage locations for retrieving data or detecting capabilities should be updated to support these new locations.
+
+## 4.9.6 (2024-02-29)
+
+- `Base64`: Fix issue where dirty memory located just after the input buffer is affecting the result. ([#4929](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/4929))
+
+## 4.9.5 (2023-12-08)
+
+- `Multicall`: Make aware of non-canonical context (i.e. `msg.sender` is not `_msgSender()`), allowing compatibility with `ERC2771Context`. Patch duplicated `Address.functionDelegateCall` in v4.9.4 (removed).
+
+## 4.9.3 (2023-07-28)
+
+- `ERC2771Context`: Return the forwarder address whenever the `msg.data` of a call originating from a trusted forwarder is not long enough to contain the request signer address (i.e. `msg.data.length` is less than 20 bytes), as specified by ERC-2771. ([#4481](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/4481))
+- `ERC2771Context`: Prevent revert in `_msgData()` when a call originating from a trusted forwarder is not long enough to contain the request signer address (i.e. `msg.data.length` is less than 20 bytes). Return the full calldata in that case. ([#4484](https://github.com/OpenZeppelin/openzeppelin-contracts/pull/4484))
 
 ## 4.9.2 (2023-06-16)
 
@@ -654,7 +684,7 @@ It is no longer possible to call an `initializer`-protected function from within
 This release includes two small breaking changes in `TimelockController`.
 
 1. The `onlyRole` modifier in this contract was designed to let anyone through if the role was granted to `address(0)`,
-   allowing the possibility to to make a role "open", which can be used for `EXECUTOR_ROLE`. This modifier is now
+   allowing the possibility to make a role "open", which can be used for `EXECUTOR_ROLE`. This modifier is now
    replaced by `AccessControl.onlyRole`, which does not have this ability. The previous behavior was moved to the
    modifier `TimelockController.onlyRoleOrOpenRole`.
 2. It was possible to make `PROPOSER_ROLE` an open role (as described in the previous item) if it was granted to

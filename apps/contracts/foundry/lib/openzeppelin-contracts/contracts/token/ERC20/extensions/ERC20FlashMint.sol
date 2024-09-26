@@ -8,7 +8,7 @@ import {IERC3156FlashLender} from "../../../interfaces/IERC3156FlashLender.sol";
 import {ERC20} from "../ERC20.sol";
 
 /**
- * @dev Implementation of the ERC3156 Flash loans extension, as defined in
+ * @dev Implementation of the ERC-3156 Flash loans extension, as defined in
  * https://eips.ethereum.org/EIPS/eip-3156[ERC-3156].
  *
  * Adds the {flashLoan} method, which provides flash loan support at the token
@@ -32,7 +32,7 @@ abstract contract ERC20FlashMint is ERC20, IERC3156FlashLender {
     error ERC3156ExceededMaxLoan(uint256 maxLoan);
 
     /**
-     * @dev The receiver of a flashloan is not a valid {onFlashLoan} implementer.
+     * @dev The receiver of a flashloan is not a valid {IERC3156FlashBorrower-onFlashLoan} implementer.
      */
     error ERC3156InvalidReceiver(address receiver);
 

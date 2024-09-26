@@ -46,10 +46,7 @@ contract MockERC20 is IERC20 {
         return _balanceOf[owner];
     }
 
-    function allowance(
-        address owner,
-        address spender
-    ) external view override returns (uint256) {
+    function allowance(address owner, address spender) external view override returns (uint256) {
         return _allowance[owner][spender];
     }
 
@@ -72,11 +69,7 @@ contract MockERC20 is IERC20 {
 
     /// @dev To hide constructor warnings across solc versions due to different constructor visibility requirements and
     /// syntaxes, we add an initialization function that can be called only once.
-    function initialize(
-        string memory name_,
-        string memory symbol_,
-        uint8 decimals_
-    ) public {
+    function initialize(string memory name_, string memory symbol_, uint8 decimals_) public {
         require(!initialized, "ALREADY_INITIALIZED");
 
         _name = name_;
@@ -93,10 +86,7 @@ contract MockERC20 is IERC20 {
                                ERC20 LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function approve(
-        address spender,
-        uint256 amount
-    ) public virtual override returns (bool) {
+    function approve(address spender, uint256 amount) public virtual override returns (bool) {
         _allowance[msg.sender][spender] = amount;
 
         emit Approval(msg.sender, spender, amount);
@@ -104,10 +94,7 @@ contract MockERC20 is IERC20 {
         return true;
     }
 
-    function transfer(
-        address to,
-        uint256 amount
-    ) public virtual override returns (bool) {
+    function transfer(address to, uint256 amount) public virtual override returns (bool) {
         _balanceOf[msg.sender] = _sub(_balanceOf[msg.sender], amount);
         _balanceOf[to] = _add(_balanceOf[to], amount);
 
@@ -116,15 +103,10 @@ contract MockERC20 is IERC20 {
         return true;
     }
 
-    function transferFrom(
-        address from,
-        address to,
-        uint256 amount
-    ) public virtual override returns (bool) {
+    function transferFrom(address from, address to, uint256 amount) public virtual override returns (bool) {
         uint256 allowed = _allowance[from][msg.sender]; // Saves gas for limited approvals.
 
-        if (allowed != ~uint256(0))
-            _allowance[from][msg.sender] = _sub(allowed, amount);
+        if (allowed != ~uint256(0)) _allowance[from][msg.sender] = _sub(allowed, amount);
 
         _balanceOf[from] = _sub(_balanceOf[from], amount);
         _balanceOf[to] = _add(_balanceOf[to], amount);
@@ -138,15 +120,10 @@ contract MockERC20 is IERC20 {
                              EIP-2612 LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function permit(
-        address owner,
-        address spender,
-        uint256 value,
-        uint256 deadline,
-        uint8 v,
-        bytes32 r,
-        bytes32 s
-    ) public virtual {
+    function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)
+        public
+        virtual
+    {
         require(deadline >= block.timestamp, "PERMIT_DEADLINE_EXPIRED");
 
         address recoveredAddress = ecrecover(
@@ -173,10 +150,7 @@ contract MockERC20 is IERC20 {
             s
         );
 
-        require(
-            recoveredAddress != address(0) && recoveredAddress == owner,
-            "INVALID_SIGNER"
-        );
+        require(recoveredAddress != address(0) && recoveredAddress == owner, "INVALID_SIGNER");
 
         _allowance[recoveredAddress][spender] = value;
 
@@ -184,25 +158,19 @@ contract MockERC20 is IERC20 {
     }
 
     function DOMAIN_SEPARATOR() public view virtual returns (bytes32) {
-        return
-            _pureChainId() == INITIAL_CHAIN_ID
-                ? INITIAL_DOMAIN_SEPARATOR
-                : computeDomainSeparator();
+        return _pureChainId() == INITIAL_CHAIN_ID ? INITIAL_DOMAIN_SEPARATOR : computeDomainSeparator();
     }
 
     function computeDomainSeparator() internal view virtual returns (bytes32) {
-        return
-            keccak256(
-                abi.encode(
-                    keccak256(
-                        "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
-                    ),
-                    keccak256(bytes(_name)),
-                    keccak256("1"),
-                    _pureChainId(),
-                    address(this)
-                )
-            );
+        return keccak256(
+            abi.encode(
+                keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
+                keccak256(bytes(_name)),
+                keccak256("1"),
+                _pureChainId(),
+                address(this)
+            )
+        );
     }
 
     /*//////////////////////////////////////////////////////////////

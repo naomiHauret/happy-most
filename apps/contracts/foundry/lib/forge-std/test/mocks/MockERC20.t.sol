@@ -23,9 +23,7 @@ contract MockERC20Test is StdCheats, Test {
     Token_ERC20 token;
 
     bytes32 constant PERMIT_TYPEHASH =
-        keccak256(
-            "Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"
-        );
+        keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
 
     function setUp() public {
         token = new Token_ERC20("Token", "TKN", 18);
@@ -112,16 +110,7 @@ contract MockERC20Test is StdCheats, Test {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(
-                        abi.encode(
-                            PERMIT_TYPEHASH,
-                            owner,
-                            address(0xCAFE),
-                            1e18,
-                            0,
-                            block.timestamp
-                        )
-                    )
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, address(0xCAFE), 1e18, 0, block.timestamp))
                 )
             )
         );
@@ -169,16 +158,7 @@ contract MockERC20Test is StdCheats, Test {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(
-                        abi.encode(
-                            PERMIT_TYPEHASH,
-                            owner,
-                            address(0xCAFE),
-                            1e18,
-                            1,
-                            block.timestamp
-                        )
-                    )
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, address(0xCAFE), 1e18, 1, block.timestamp))
                 )
             )
         );
@@ -196,29 +176,12 @@ contract MockERC20Test is StdCheats, Test {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(
-                        abi.encode(
-                            PERMIT_TYPEHASH,
-                            owner,
-                            address(0xCAFE),
-                            1e18,
-                            0,
-                            block.timestamp
-                        )
-                    )
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, address(0xCAFE), 1e18, 0, block.timestamp))
                 )
             )
         );
 
-        token.permit(
-            owner,
-            address(0xCAFE),
-            1e18,
-            block.timestamp + 1,
-            v,
-            r,
-            s
-        );
+        token.permit(owner, address(0xCAFE), 1e18, block.timestamp + 1, v, r, s);
     }
 
     function testFailPermitPastDeadline() public {
@@ -232,16 +195,7 @@ contract MockERC20Test is StdCheats, Test {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(
-                        abi.encode(
-                            PERMIT_TYPEHASH,
-                            owner,
-                            address(0xCAFE),
-                            1e18,
-                            0,
-                            oldTimestamp
-                        )
-                    )
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, address(0xCAFE), 1e18, 0, oldTimestamp))
                 )
             )
         );
@@ -260,16 +214,7 @@ contract MockERC20Test is StdCheats, Test {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(
-                        abi.encode(
-                            PERMIT_TYPEHASH,
-                            owner,
-                            address(0xCAFE),
-                            1e18,
-                            0,
-                            block.timestamp
-                        )
-                    )
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, address(0xCAFE), 1e18, 0, block.timestamp))
                 )
             )
         );
@@ -278,11 +223,7 @@ contract MockERC20Test is StdCheats, Test {
         token.permit(owner, address(0xCAFE), 1e18, block.timestamp, v, r, s);
     }
 
-    function testMetadata(
-        string calldata name,
-        string calldata symbol,
-        uint8 decimals
-    ) public {
+    function testMetadata(string calldata name, string calldata symbol, uint8 decimals) public {
         Token_ERC20 tkn = new Token_ERC20(name, symbol, decimals);
         assertEq(tkn.name(), name);
         assertEq(tkn.symbol(), symbol);
@@ -296,11 +237,7 @@ contract MockERC20Test is StdCheats, Test {
         assertEq(token.balanceOf(from), amount);
     }
 
-    function testBurn(
-        address from,
-        uint256 mintAmount,
-        uint256 burnAmount
-    ) public {
+    function testBurn(address from, uint256 mintAmount, uint256 burnAmount) public {
         burnAmount = bound(burnAmount, 0, mintAmount);
 
         token.mint(from, mintAmount);
@@ -330,11 +267,7 @@ contract MockERC20Test is StdCheats, Test {
         }
     }
 
-    function testTransferFrom(
-        address to,
-        uint256 approval,
-        uint256 amount
-    ) public {
+    function testTransferFrom(address to, uint256 approval, uint256 amount) public {
         amount = bound(amount, 0, approval);
 
         address from = address(0xABCD);
@@ -347,9 +280,7 @@ contract MockERC20Test is StdCheats, Test {
         assertTrue(token.transferFrom(from, to, amount));
         assertEq(token.totalSupply(), amount);
 
-        uint256 app = from == address(this) || approval == type(uint256).max
-            ? approval
-            : approval - amount;
+        uint256 app = from == address(this) || approval == type(uint256).max ? approval : approval - amount;
         assertEq(token.allowance(from, address(this)), app);
 
         if (from == to) {
@@ -360,12 +291,7 @@ contract MockERC20Test is StdCheats, Test {
         }
     }
 
-    function testPermit(
-        uint248 privKey,
-        address to,
-        uint256 amount,
-        uint256 deadline
-    ) public {
+    function testPermit(uint248 privKey, address to, uint256 amount, uint256 deadline) public {
         uint256 privateKey = privKey;
         if (deadline < block.timestamp) deadline = block.timestamp;
         if (privateKey == 0) privateKey = 1;
@@ -378,16 +304,7 @@ contract MockERC20Test is StdCheats, Test {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(
-                        abi.encode(
-                            PERMIT_TYPEHASH,
-                            owner,
-                            to,
-                            amount,
-                            0,
-                            deadline
-                        )
-                    )
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, to, amount, 0, deadline))
                 )
             )
         );
@@ -398,33 +315,21 @@ contract MockERC20Test is StdCheats, Test {
         assertEq(token.nonces(owner), 1);
     }
 
-    function testFailBurnInsufficientBalance(
-        address to,
-        uint256 mintAmount,
-        uint256 burnAmount
-    ) public {
+    function testFailBurnInsufficientBalance(address to, uint256 mintAmount, uint256 burnAmount) public {
         burnAmount = bound(burnAmount, mintAmount + 1, type(uint256).max);
 
         token.mint(to, mintAmount);
         token.burn(to, burnAmount);
     }
 
-    function testFailTransferInsufficientBalance(
-        address to,
-        uint256 mintAmount,
-        uint256 sendAmount
-    ) public {
+    function testFailTransferInsufficientBalance(address to, uint256 mintAmount, uint256 sendAmount) public {
         sendAmount = bound(sendAmount, mintAmount + 1, type(uint256).max);
 
         token.mint(address(this), mintAmount);
         token.transfer(to, sendAmount);
     }
 
-    function testFailTransferFromInsufficientAllowance(
-        address to,
-        uint256 approval,
-        uint256 amount
-    ) public {
+    function testFailTransferFromInsufficientAllowance(address to, uint256 approval, uint256 amount) public {
         amount = bound(amount, approval + 1, type(uint256).max);
 
         address from = address(0xABCD);
@@ -437,11 +342,7 @@ contract MockERC20Test is StdCheats, Test {
         token.transferFrom(from, to, amount);
     }
 
-    function testFailTransferFromInsufficientBalance(
-        address to,
-        uint256 mintAmount,
-        uint256 sendAmount
-    ) public {
+    function testFailTransferFromInsufficientBalance(address to, uint256 mintAmount, uint256 sendAmount) public {
         sendAmount = bound(sendAmount, mintAmount + 1, type(uint256).max);
 
         address from = address(0xABCD);
@@ -454,13 +355,9 @@ contract MockERC20Test is StdCheats, Test {
         token.transferFrom(from, to, sendAmount);
     }
 
-    function testFailPermitBadNonce(
-        uint256 privateKey,
-        address to,
-        uint256 amount,
-        uint256 deadline,
-        uint256 nonce
-    ) public {
+    function testFailPermitBadNonce(uint256 privateKey, address to, uint256 amount, uint256 deadline, uint256 nonce)
+        public
+    {
         if (deadline < block.timestamp) deadline = block.timestamp;
         if (privateKey == 0) privateKey = 1;
         if (nonce == 0) nonce = 1;
@@ -473,16 +370,7 @@ contract MockERC20Test is StdCheats, Test {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(
-                        abi.encode(
-                            PERMIT_TYPEHASH,
-                            owner,
-                            to,
-                            amount,
-                            nonce,
-                            deadline
-                        )
-                    )
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, to, amount, nonce, deadline))
                 )
             )
         );
@@ -490,12 +378,7 @@ contract MockERC20Test is StdCheats, Test {
         token.permit(owner, to, amount, deadline, v, r, s);
     }
 
-    function testFailPermitBadDeadline(
-        uint256 privateKey,
-        address to,
-        uint256 amount,
-        uint256 deadline
-    ) public {
+    function testFailPermitBadDeadline(uint256 privateKey, address to, uint256 amount, uint256 deadline) public {
         if (deadline < block.timestamp) deadline = block.timestamp;
         if (privateKey == 0) privateKey = 1;
 
@@ -507,16 +390,7 @@ contract MockERC20Test is StdCheats, Test {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(
-                        abi.encode(
-                            PERMIT_TYPEHASH,
-                            owner,
-                            to,
-                            amount,
-                            0,
-                            deadline
-                        )
-                    )
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, to, amount, 0, deadline))
                 )
             )
         );
@@ -524,12 +398,7 @@ contract MockERC20Test is StdCheats, Test {
         token.permit(owner, to, amount, deadline + 1, v, r, s);
     }
 
-    function testFailPermitPastDeadline(
-        uint256 privateKey,
-        address to,
-        uint256 amount,
-        uint256 deadline
-    ) public {
+    function testFailPermitPastDeadline(uint256 privateKey, address to, uint256 amount, uint256 deadline) public {
         deadline = bound(deadline, 0, block.timestamp - 1);
         if (privateKey == 0) privateKey = 1;
 
@@ -541,16 +410,7 @@ contract MockERC20Test is StdCheats, Test {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(
-                        abi.encode(
-                            PERMIT_TYPEHASH,
-                            owner,
-                            to,
-                            amount,
-                            0,
-                            deadline
-                        )
-                    )
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, to, amount, 0, deadline))
                 )
             )
         );
@@ -558,12 +418,7 @@ contract MockERC20Test is StdCheats, Test {
         token.permit(owner, to, amount, deadline, v, r, s);
     }
 
-    function testFailPermitReplay(
-        uint256 privateKey,
-        address to,
-        uint256 amount,
-        uint256 deadline
-    ) public {
+    function testFailPermitReplay(uint256 privateKey, address to, uint256 amount, uint256 deadline) public {
         if (deadline < block.timestamp) deadline = block.timestamp;
         if (privateKey == 0) privateKey = 1;
 
@@ -575,16 +430,7 @@ contract MockERC20Test is StdCheats, Test {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(
-                        abi.encode(
-                            PERMIT_TYPEHASH,
-                            owner,
-                            to,
-                            amount,
-                            0,
-                            deadline
-                        )
-                    )
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, to, amount, 0, deadline))
                 )
             )
         );

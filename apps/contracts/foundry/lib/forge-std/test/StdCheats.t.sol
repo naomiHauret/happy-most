@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.7.0 <0.9.0;
 
-import "../src/StdCheats.sol";
-import "../src/Test.sol";
-import "../src/StdJson.sol";
-import "../src/StdToml.sol";
-import "../src/interfaces/IERC20.sol";
+import {StdCheats} from "../src/StdCheats.sol";
+import {Test} from "../src/Test.sol";
+import {stdJson} from "../src/StdJson.sol";
+import {stdToml} from "../src/StdToml.sol";
+import {IERC20} from "../src/interfaces/IERC20.sol";
 
 contract StdCheatsTest is Test {
     Bar test;
@@ -87,7 +87,7 @@ contract StdCheatsTest is Test {
     }
 
     function test_MakeAddrEquivalence() public {
-        (address addr, ) = makeAddrAndKey("1337");
+        (address addr,) = makeAddrAndKey("1337");
         assertEq(makeAddr("1337"), addr);
     }
 
@@ -189,11 +189,7 @@ contract StdCheatsTest is Test {
     }
 
     function test_DeployCodeVal() public {
-        address deployed = deployCode(
-            "StdCheats.t.sol:Bar",
-            bytes(""),
-            1 ether
-        );
+        address deployed = deployCode("StdCheats.t.sol:Bar", bytes(""), 1 ether);
         assertEq(string(getCode(deployed)), string(getCode(address(test))));
         assertEq(deployed.balance, 1 ether);
     }
@@ -209,10 +205,8 @@ contract StdCheatsTest is Test {
         deployCode(what);
     }
 
-    function test_DeployCodeFail() public {
-        vm.expectRevert(
-            bytes("StdCheats deployCode(string): Deployment failed.")
-        );
+    function test_RevertIf_DeployCodeFail() public {
+        vm.expectRevert(bytes("StdCheats deployCode(string): Deployment failed."));
         this.deployCodeHelper("StdCheats.t.sol:RevertingContract");
     }
 
@@ -225,10 +219,7 @@ contract StdCheatsTest is Test {
             // by using o_code = new bytes(size)
             o_code := mload(0x40)
             // new "memory end" including padding
-            mstore(
-                0x40,
-                add(o_code, and(add(add(size, 0x20), 0x1f), not(0x1f)))
-            )
+            mstore(0x40, add(o_code, and(add(add(size, 0x20), 0x1f), not(0x1f))))
             // store length in memory
             mstore(o_code, size)
             // actually retrieve the code, this needs assembly
@@ -237,15 +228,11 @@ contract StdCheatsTest is Test {
     }
 
     function test_DeriveRememberKey() public {
-        string
-            memory mnemonic = "test test test test test test test test test test test junk";
+        string memory mnemonic = "test test test test test test test test test test test junk";
 
         (address deployer, uint256 privateKey) = deriveRememberKey(mnemonic, 0);
         assertEq(deployer, 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266);
-        assertEq(
-            privateKey,
-            0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
-        );
+        assertEq(privateKey, 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80);
     }
 
     function test_BytesToUint() public pure {
@@ -257,16 +244,10 @@ contract StdCheatsTest is Test {
 
     function test_ParseJsonTxDetail() public view {
         string memory root = vm.projectRoot();
-        string memory path = string.concat(
-            root,
-            "/test/fixtures/broadcast.log.json"
-        );
+        string memory path = string.concat(root, "/test/fixtures/broadcast.log.json");
         string memory json = vm.readFile(path);
         bytes memory transactionDetails = json.parseRaw(".transactions[0].tx");
-        RawTx1559Detail memory rawTxDetail = abi.decode(
-            transactionDetails,
-            (RawTx1559Detail)
-        );
+        RawTx1559Detail memory rawTxDetail = abi.decode(transactionDetails, (RawTx1559Detail));
         Tx1559Detail memory txDetail = rawToConvertedEIP1559Detail(rawTxDetail);
         assertEq(txDetail.from, 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266);
         assertEq(txDetail.to, 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512);
@@ -282,10 +263,7 @@ contract StdCheatsTest is Test {
 
     function test_ReadEIP1559Transaction() public view {
         string memory root = vm.projectRoot();
-        string memory path = string.concat(
-            root,
-            "/test/fixtures/broadcast.log.json"
-        );
+        string memory path = string.concat(root, "/test/fixtures/broadcast.log.json");
         uint256 index = 0;
         Tx1559 memory transaction = readTx1559(path, index);
         transaction;
@@ -293,20 +271,14 @@ contract StdCheatsTest is Test {
 
     function test_ReadEIP1559Transactions() public view {
         string memory root = vm.projectRoot();
-        string memory path = string.concat(
-            root,
-            "/test/fixtures/broadcast.log.json"
-        );
+        string memory path = string.concat(root, "/test/fixtures/broadcast.log.json");
         Tx1559[] memory transactions = readTx1559s(path);
         transactions;
     }
 
     function test_ReadReceipt() public view {
         string memory root = vm.projectRoot();
-        string memory path = string.concat(
-            root,
-            "/test/fixtures/broadcast.log.json"
-        );
+        string memory path = string.concat(root, "/test/fixtures/broadcast.log.json");
         uint256 index = 5;
         Receipt memory receipt = readReceipt(path, index);
         assertEq(
@@ -317,10 +289,7 @@ contract StdCheatsTest is Test {
 
     function test_ReadReceipts() public view {
         string memory root = vm.projectRoot();
-        string memory path = string.concat(
-            root,
-            "/test/fixtures/broadcast.log.json"
-        );
+        string memory path = string.concat(root, "/test/fixtures/broadcast.log.json");
         Receipt[] memory receipts = readReceipts(path);
         receipts;
     }
@@ -360,10 +329,7 @@ contract StdCheatsTest is Test {
     function bytesToUint_test(bytes memory b) private pure returns (uint256) {
         uint256 number;
         for (uint256 i = 0; i < b.length; i++) {
-            number =
-                number +
-                uint256(uint8(b[i])) *
-                (2 ** (8 * (b.length - (i + 1))));
+            number = number + uint256(uint8(b[i])) * (2 ** (8 * (b.length - (i + 1))));
         }
         return number;
     }
@@ -375,10 +341,7 @@ contract StdCheatsTest is Test {
         }
         assertTrue(addr != address(0));
         assertTrue(addr < address(1) || addr > address(9));
-        assertTrue(
-            addr != address(vm) ||
-                addr != 0x000000000000000000636F6e736F6c652e6c6f67
-        );
+        assertTrue(addr != address(vm) || addr != 0x000000000000000000636F6e736F6c652e6c6f67);
     }
 
     function test_AssumePayable() external {
@@ -389,28 +352,20 @@ contract StdCheatsTest is Test {
 
         // VM address
         vm.expectRevert();
-        stdCheatsMock.exposed_assumePayable(
-            0x7109709ECfa91a80626fF3989D68f67F5b1DD12D
-        );
+        stdCheatsMock.exposed_assumePayable(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
 
         // Console address
         vm.expectRevert();
-        stdCheatsMock.exposed_assumePayable(
-            0x000000000000000000636F6e736F6c652e6c6f67
-        );
+        stdCheatsMock.exposed_assumePayable(0x000000000000000000636F6e736F6c652e6c6f67);
 
         // Create2Deployer
         vm.expectRevert();
-        stdCheatsMock.exposed_assumePayable(
-            0x4e59b44847b379578588920cA78FbF26c0B4956C
-        );
+        stdCheatsMock.exposed_assumePayable(0x4e59b44847b379578588920cA78FbF26c0B4956C);
 
         // all should pass since these addresses are payable
 
         // vitalik.eth
-        stdCheatsMock.exposed_assumePayable(
-            0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
-        );
+        stdCheatsMock.exposed_assumePayable(0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045);
 
         // mock payable contract
         MockContractPayable cp = new MockContractPayable();
@@ -424,27 +379,19 @@ contract StdCheatsTest is Test {
         // all should pass since these addresses are not payable
 
         // VM address
-        stdCheatsMock.exposed_assumeNotPayable(
-            0x7109709ECfa91a80626fF3989D68f67F5b1DD12D
-        );
+        stdCheatsMock.exposed_assumeNotPayable(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
 
         // Console address
-        stdCheatsMock.exposed_assumeNotPayable(
-            0x000000000000000000636F6e736F6c652e6c6f67
-        );
+        stdCheatsMock.exposed_assumeNotPayable(0x000000000000000000636F6e736F6c652e6c6f67);
 
         // Create2Deployer
-        stdCheatsMock.exposed_assumeNotPayable(
-            0x4e59b44847b379578588920cA78FbF26c0B4956C
-        );
+        stdCheatsMock.exposed_assumeNotPayable(0x4e59b44847b379578588920cA78FbF26c0B4956C);
 
         // all should revert since these addresses are payable
 
         // vitalik.eth
         vm.expectRevert();
-        stdCheatsMock.exposed_assumeNotPayable(
-            0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
-        );
+        stdCheatsMock.exposed_assumeNotPayable(0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045);
 
         // mock payable contract
         MockContractPayable cp = new MockContractPayable();
@@ -455,27 +402,21 @@ contract StdCheatsTest is Test {
     function testFuzz_AssumeNotPrecompile(address addr) external {
         assumeNotPrecompile(addr, getChain("optimism_sepolia").chainId);
         assertTrue(
-            addr < address(1) ||
-                (addr > address(9) &&
-                    addr <
-                    address(0x4200000000000000000000000000000000000000)) ||
-                addr > address(0x4200000000000000000000000000000000000800)
+            addr < address(1) || (addr > address(9) && addr < address(0x4200000000000000000000000000000000000000))
+                || addr > address(0x4200000000000000000000000000000000000800)
         );
     }
 
     function testFuzz_AssumeNotForgeAddress(address addr) external pure {
         assumeNotForgeAddress(addr);
         assertTrue(
-            addr != address(vm) &&
-                addr != 0x000000000000000000636F6e736F6c652e6c6f67 &&
-                addr != 0x4e59b44847b379578588920cA78FbF26c0B4956C
+            addr != address(vm) && addr != 0x000000000000000000636F6e736F6c652e6c6f67
+                && addr != 0x4e59b44847b379578588920cA78FbF26c0B4956C
         );
     }
 
-    function test_CannotDeployCodeTo() external {
-        vm.expectRevert(
-            "StdCheats deployCodeTo(string,bytes,uint256,address): Failed to create runtime bytecode."
-        );
+    function test_RevertIf_CannotDeployCodeTo() external {
+        vm.expectRevert("StdCheats deployCodeTo(string,bytes,uint256,address): Failed to create runtime bytecode.");
         this._revertDeployCodeTo();
     }
 
@@ -493,9 +434,7 @@ contract StdCheatsTest is Test {
             arbitraryAddress
         );
 
-        MockContractWithConstructorArgs ct = MockContractWithConstructorArgs(
-            arbitraryAddress
-        );
+        MockContractWithConstructorArgs ct = MockContractWithConstructorArgs(arbitraryAddress);
 
         assertEq(arbitraryAddress.balance, 1 ether);
         assertEq(ct.x(), 6);
@@ -514,10 +453,7 @@ contract StdCheatsMock is StdCheats {
     }
 
     // We deploy a mock version so we can properly test expected reverts.
-    function exposed_assumeNotBlacklisted(
-        address token,
-        address addr
-    ) external view {
+    function exposed_assumeNotBlacklisted(address token, address addr) external view {
         return assumeNotBlacklisted(token, addr);
     }
 }
@@ -525,35 +461,29 @@ contract StdCheatsMock is StdCheats {
 contract StdCheatsForkTest is Test {
     address internal constant SHIB = 0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE;
     address internal constant USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
-    address internal constant USDC_BLACKLISTED_USER =
-        0x1E34A77868E19A6647b1f2F47B51ed72dEDE95DD;
+    address internal constant USDC_BLACKLISTED_USER = 0x1E34A77868E19A6647b1f2F47B51ed72dEDE95DD;
     address internal constant USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
-    address internal constant USDT_BLACKLISTED_USER =
-        0x8f8a8F4B54a2aAC7799d7bc81368aC27b852822A;
+    address internal constant USDT_BLACKLISTED_USER = 0x8f8a8F4B54a2aAC7799d7bc81368aC27b852822A;
 
     function setUp() public {
         // All tests of the `assumeNotBlacklisted` method are fork tests using live contracts.
         vm.createSelectFork({urlOrAlias: "mainnet", blockNumber: 16_428_900});
     }
 
-    function test_CannotAssumeNoBlacklisted_EOA() external {
+    function test_RevertIf_CannotAssumeNoBlacklisted_EOA() external {
         // We deploy a mock version so we can properly test the revert.
         StdCheatsMock stdCheatsMock = new StdCheatsMock();
         address eoa = vm.addr({privateKey: 1});
-        vm.expectRevert(
-            "StdCheats assumeNotBlacklisted(address,address): Token address is not a contract."
-        );
+        vm.expectRevert("StdCheats assumeNotBlacklisted(address,address): Token address is not a contract.");
         stdCheatsMock.exposed_assumeNotBlacklisted(eoa, address(0));
     }
 
-    function testFuzz_AssumeNotBlacklisted_TokenWithoutBlacklist(
-        address addr
-    ) external view {
+    function testFuzz_AssumeNotBlacklisted_TokenWithoutBlacklist(address addr) external view {
         assumeNotBlacklisted(SHIB, addr);
         assertTrue(true);
     }
 
-    function test_AssumeNoBlacklisted_USDC() external {
+    function test_RevertIf_AssumeNoBlacklisted_USDC() external {
         // We deploy a mock version so we can properly test the revert.
         StdCheatsMock stdCheatsMock = new StdCheatsMock();
         vm.expectRevert();
@@ -565,7 +495,7 @@ contract StdCheatsForkTest is Test {
         assertFalse(USDCLike(USDC).isBlacklisted(addr));
     }
 
-    function test_AssumeNoBlacklisted_USDT() external {
+    function test_RevertIf_AssumeNoBlacklisted_USDT() external {
         // We deploy a mock version so we can properly test the revert.
         StdCheatsMock stdCheatsMock = new StdCheatsMock();
         vm.expectRevert();
@@ -604,10 +534,7 @@ contract Bar {
         require(tx.origin == expectedSender, "!prank");
     }
 
-    function origin(
-        address expectedSender,
-        address expectedOrigin
-    ) public payable {
+    function origin(address expectedSender, address expectedOrigin) public payable {
         require(msg.sender == expectedSender, "!prank");
         require(tx.origin == expectedOrigin, "!prank");
     }
@@ -624,10 +551,7 @@ contract BarERC1155 {
         _balances[0][address(this)] = _totalSupply[0];
     }
 
-    function balanceOf(
-        address account,
-        uint256 id
-    ) public view virtual returns (uint256) {
+    function balanceOf(address account, uint256 id) public view virtual returns (uint256) {
         return _balances[id][account];
     }
 

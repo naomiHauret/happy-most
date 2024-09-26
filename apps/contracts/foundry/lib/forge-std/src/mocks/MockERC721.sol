@@ -22,9 +22,7 @@ contract MockERC721 is IERC721Metadata {
         return _symbol;
     }
 
-    function tokenURI(
-        uint256 id
-    ) public view virtual override returns (string memory) {}
+    function tokenURI(uint256 id) public view virtual override returns (string memory) {}
 
     /*//////////////////////////////////////////////////////////////
                       ERC721 BALANCE/OWNER STORAGE
@@ -34,15 +32,11 @@ contract MockERC721 is IERC721Metadata {
 
     mapping(address => uint256) internal _balanceOf;
 
-    function ownerOf(
-        uint256 id
-    ) public view virtual override returns (address owner) {
+    function ownerOf(uint256 id) public view virtual override returns (address owner) {
         require((owner = _ownerOf[id]) != address(0), "NOT_MINTED");
     }
 
-    function balanceOf(
-        address owner
-    ) public view virtual override returns (uint256) {
+    function balanceOf(address owner) public view virtual override returns (uint256) {
         require(owner != address(0), "ZERO_ADDRESS");
 
         return _balanceOf[owner];
@@ -56,16 +50,11 @@ contract MockERC721 is IERC721Metadata {
 
     mapping(address => mapping(address => bool)) internal _isApprovedForAll;
 
-    function getApproved(
-        uint256 id
-    ) public view virtual override returns (address) {
+    function getApproved(uint256 id) public view virtual override returns (address) {
         return _getApproved[id];
     }
 
-    function isApprovedForAll(
-        address owner,
-        address operator
-    ) public view virtual override returns (bool) {
+    function isApprovedForAll(address owner, address operator) public view virtual override returns (bool) {
         return _isApprovedForAll[owner][operator];
     }
 
@@ -91,44 +80,29 @@ contract MockERC721 is IERC721Metadata {
                               ERC721 LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function approve(
-        address spender,
-        uint256 id
-    ) public payable virtual override {
+    function approve(address spender, uint256 id) public payable virtual override {
         address owner = _ownerOf[id];
 
-        require(
-            msg.sender == owner || _isApprovedForAll[owner][msg.sender],
-            "NOT_AUTHORIZED"
-        );
+        require(msg.sender == owner || _isApprovedForAll[owner][msg.sender], "NOT_AUTHORIZED");
 
         _getApproved[id] = spender;
 
         emit Approval(owner, spender, id);
     }
 
-    function setApprovalForAll(
-        address operator,
-        bool approved
-    ) public virtual override {
+    function setApprovalForAll(address operator, bool approved) public virtual override {
         _isApprovedForAll[msg.sender][operator] = approved;
 
         emit ApprovalForAll(msg.sender, operator, approved);
     }
 
-    function transferFrom(
-        address from,
-        address to,
-        uint256 id
-    ) public payable virtual override {
+    function transferFrom(address from, address to, uint256 id) public payable virtual override {
         require(from == _ownerOf[id], "WRONG_FROM");
 
         require(to != address(0), "INVALID_RECIPIENT");
 
         require(
-            msg.sender == from ||
-                _isApprovedForAll[from][msg.sender] ||
-                msg.sender == _getApproved[id],
+            msg.sender == from || _isApprovedForAll[from][msg.sender] || msg.sender == _getApproved[id],
             "NOT_AUTHORIZED"
         );
 
@@ -145,43 +119,29 @@ contract MockERC721 is IERC721Metadata {
         emit Transfer(from, to, id);
     }
 
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 id
-    ) public payable virtual override {
+    function safeTransferFrom(address from, address to, uint256 id) public payable virtual override {
         transferFrom(from, to, id);
 
         require(
-            !_isContract(to) ||
-                IERC721TokenReceiver(to).onERC721Received(
-                    msg.sender,
-                    from,
-                    id,
-                    ""
-                ) ==
-                IERC721TokenReceiver.onERC721Received.selector,
+            !_isContract(to)
+                || IERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, "")
+                    == IERC721TokenReceiver.onERC721Received.selector,
             "UNSAFE_RECIPIENT"
         );
     }
 
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 id,
-        bytes memory data
-    ) public payable virtual override {
+    function safeTransferFrom(address from, address to, uint256 id, bytes memory data)
+        public
+        payable
+        virtual
+        override
+    {
         transferFrom(from, to, id);
 
         require(
-            !_isContract(to) ||
-                IERC721TokenReceiver(to).onERC721Received(
-                    msg.sender,
-                    from,
-                    id,
-                    data
-                ) ==
-                IERC721TokenReceiver.onERC721Received.selector,
+            !_isContract(to)
+                || IERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, data)
+                    == IERC721TokenReceiver.onERC721Received.selector,
             "UNSAFE_RECIPIENT"
         );
     }
@@ -190,13 +150,10 @@ contract MockERC721 is IERC721Metadata {
                               ERC165 LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function supportsInterface(
-        bytes4 interfaceId
-    ) public view virtual override returns (bool) {
-        return
-            interfaceId == 0x01ffc9a7 || // ERC165 Interface ID for ERC165
-            interfaceId == 0x80ac58cd || // ERC165 Interface ID for ERC721
-            interfaceId == 0x5b5e139f; // ERC165 Interface ID for ERC721Metadata
+    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
+        return interfaceId == 0x01ffc9a7 // ERC165 Interface ID for ERC165
+            || interfaceId == 0x80ac58cd // ERC165 Interface ID for ERC721
+            || interfaceId == 0x5b5e139f; // ERC165 Interface ID for ERC721Metadata
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -239,34 +196,20 @@ contract MockERC721 is IERC721Metadata {
         _mint(to, id);
 
         require(
-            !_isContract(to) ||
-                IERC721TokenReceiver(to).onERC721Received(
-                    msg.sender,
-                    address(0),
-                    id,
-                    ""
-                ) ==
-                IERC721TokenReceiver.onERC721Received.selector,
+            !_isContract(to)
+                || IERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, "")
+                    == IERC721TokenReceiver.onERC721Received.selector,
             "UNSAFE_RECIPIENT"
         );
     }
 
-    function _safeMint(
-        address to,
-        uint256 id,
-        bytes memory data
-    ) internal virtual {
+    function _safeMint(address to, uint256 id, bytes memory data) internal virtual {
         _mint(to, id);
 
         require(
-            !_isContract(to) ||
-                IERC721TokenReceiver(to).onERC721Received(
-                    msg.sender,
-                    address(0),
-                    id,
-                    data
-                ) ==
-                IERC721TokenReceiver.onERC721Received.selector,
+            !_isContract(to)
+                || IERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, data)
+                    == IERC721TokenReceiver.onERC721Received.selector,
             "UNSAFE_RECIPIENT"
         );
     }

@@ -115,7 +115,7 @@ In addition to the official Solidity Style Guide we have a number of other conve
   }
   ```
 
-  Some standards (e.g. ERC20) use present tense, and in those cases the
+  Some standards (e.g. ERC-20) use present tense, and in those cases the
   standard specification is used.
   
 * Interface names should have a capital I prefix.
@@ -129,6 +129,13 @@ In addition to the official Solidity Style Guide we have a number of other conve
 
   ```solidity
   abstract contract AccessControl is ..., {
+  ```
+
+* Return values are generally not named, unless they are not immediately clear or there are multiple return values.
+
+  ```solidity
+  function expiration() public view returns (uint256) { // Good
+  function hasRole() public view returns (bool isMember, uint32 currentDelay) { // Good
   ```
 
 * Unchecked arithmetic blocks should contain comments explaining why overflow is guaranteed not to happen. If the reason is immediately apparent from the line above the unchecked block, the comment may be omitted.
