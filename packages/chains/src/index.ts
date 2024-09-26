@@ -1,1 +1,1 @@
-export * from "./supported";
+export * from './supported'

@@ -1,1 +1,1 @@
-export * from "./happychain-sepolia";
+export * from './happychain-sepolia'
