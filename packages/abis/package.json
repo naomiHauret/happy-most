@@ -1,0 +1,12 @@
+{
+  "name": "@happy/abis",
+  "version": "0.1.0",
+  "private": true,
+  "exports": {
+    "./SimpleERC20": "./src/@happy/SimpleERC20.json"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@happy/tsconfig": "workspace:*"
+  }
+}
