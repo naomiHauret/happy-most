@@ -4,9 +4,13 @@
   "description": "Monorepo for Happy chain front-end assignment.",
   "scripts": {
     "dev": "pnpm run --parallel dev",
-    "format": "prettier --write \"**/*.{ts,tsx,md,json,js,jsx,astro,css}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md,json,js,jsx,sol,css}\""
   },
   "keywords": [],
   "author": "Naomi Hauret",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "prettier": "^3.3.3",
+    "prettier-plugin-solidity": "^1.4.1"
+  }
 }
