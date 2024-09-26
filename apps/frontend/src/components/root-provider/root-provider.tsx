@@ -1,7 +1,7 @@
-import { QueryClientProvider } from "@tanstack/react-query";
-import { FC, type PropsWithChildren } from "react";
-import { WagmiProvider } from "wagmi";
-import { tanstackQueryClient, wagmiConfig } from "~/config";
+import { QueryClientProvider } from '@tanstack/react-query'
+import { FC, type PropsWithChildren } from 'react'
+import { WagmiProvider } from 'wagmi'
+import { tanstackQueryClient, wagmiConfig } from '~/config'
 
 interface RootProviderProps extends PropsWithChildren {}
 
@@ -11,11 +11,9 @@ interface RootProviderProps extends PropsWithChildren {}
 const RootProvider: FC<RootProviderProps> = (props) => {
   return (
     <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={tanstackQueryClient}>
-        {props.children}
-      </QueryClientProvider>
+      <QueryClientProvider client={tanstackQueryClient}>{props.children}</QueryClientProvider>
     </WagmiProvider>
-  );
-};
+  )
+}
 
-export { RootProvider };
+export { RootProvider }

@@ -1,10 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@happy/uikit-react";
-import { apiClient } from "~/config";
+import { createFileRoute } from '@tanstack/react-router'
+import { Button } from '@happy/uikit-react'
 
-export const Route = createFileRoute("/")({
-  component: HomeComponent
-});
+export const Route = createFileRoute('/')({
+  component: HomeComponent,
+})
 
 function HomeComponent() {
   return (
@@ -12,5 +11,5 @@ function HomeComponent() {
       <h3>Welcome Home!</h3>
       <Button>hey, i'm a button !</Button>
     </div>
-  );
+  )
 }

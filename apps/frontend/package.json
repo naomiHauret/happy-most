@@ -22,9 +22,10 @@
     "vite": "^5.4.8"
   },
   "dependencies": {
+    "@happy/abis": "workspace:*",
+    "@happy/chains": "workspace:^",
     "@happy/connector": "workspace:^",
     "@happy/uikit-react": "workspace:^",
-    "@happy/chains": "workspace:^",
     "@tanstack/react-query": "^5.56.2",
     "@tanstack/react-router": "^1.58.9",
     "@tanstack/router-devtools": "^1.58.9",

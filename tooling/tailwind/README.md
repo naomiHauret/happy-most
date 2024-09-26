@@ -20,13 +20,13 @@ In your project folder, add `"@happy/tailwind": "workspace:*"` to the `devDepend
 In your project create a `postcss.config.js` file along with a `tailwind.config.ts` file. Add the following to your Tailwind configuration file :
 
 ```ts
-import type { Config } from "tailwindcss";
-import baseConfig from "@happy/tailwind/base";
+import type { Config } from 'tailwindcss'
+import baseConfig from '@happy/tailwind/base'
 const config: Config = {
   content: [], // Add the paths to all of your HTML templates, JS components, and any other files that contain Tailwind class names. For instance `./src/**/*.{ts,tsx,js,jsx,html,svelte,vue}
   presets: [baseConfig],
-};
-export default config;
+}
+export default config
 ```
 
 This will ensure you can use the customized Tailwind classes in your project.

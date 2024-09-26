@@ -1,8 +1,8 @@
-import type { Config } from "tailwindcss";
-import pluginForms from "@tailwindcss/forms";
-import pluginContainerQueries from "@tailwindcss/container-queries";
+import type { Config } from 'tailwindcss'
+import pluginForms from '@tailwindcss/forms'
+import pluginContainerQueries from '@tailwindcss/container-queries'
 
-const config: Omit<Config, "content"> = {
+const config: Omit<Config, 'content'> = {
   theme: {
     extend: {
       /**
@@ -30,9 +30,9 @@ const config: Omit<Config, "content"> = {
      * @see https://github.com/tailwindlabs/tailwindcss-forms
      */
     pluginForms({
-      strategy: "class",
+      strategy: 'class',
     }),
   ],
-};
+}
 
-export default config;
+export default config

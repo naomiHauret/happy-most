@@ -19,15 +19,15 @@ In your project folder:
 1. Create the connector
 
 ```ts
-import { createApiConnector } from "@happy/connector";
+import { createApiConnector } from '@happy/connector'
 
-const apiClient = createApiConnector("<backend endpoint>");
+const apiClient = createApiConnector('<backend endpoint>')
 ```
 
 2. Use it in your code
 
 ```ts
-const { data, error } = await app.ping.get(); // `GET  <backend endpoint>/ping`
+const { data, error } = await app.ping.get() // `GET  <backend endpoint>/ping`
 ```
 
 > Refer to `apps/backend` for complete API routes reference.
