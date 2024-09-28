@@ -35,7 +35,7 @@ contract Deploy is Script {
 
         vm.stopBroadcast();
 
-        console.log("Deployed on", chainName);
+        console.log("Deploying on", chainName);
         console.log("$RED => ", address(red));
         console.log("$BLUE => ", address(blue));
         console.log("$YLW => ", address(yellow));

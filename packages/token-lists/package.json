@@ -1,0 +1,12 @@
+{
+  "name": "@happy/token-lists",
+  "version": "0.1.0",
+  "private": true,
+  "exports": {
+    "./bridge": "./src/@happy/bridge.json"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@happy/tsconfig": "workspace:*"
+  }
+}
