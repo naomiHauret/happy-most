@@ -12,7 +12,7 @@ Connector to provide end-to-end type safety between front-end apps and the [Elys
 
 In your project folder:
 
-1. Add `"@happy/connector": "workspace:*"` to the `devDependecies` of your `package.json` (ensure `@happy/tailwind` and its dependencies are also installed as `devDepencies`).
+1. Add `"@happy/connector": "workspace:*"` to the `dependencies` of your `package.json`.
 
 ### Use the connector
 

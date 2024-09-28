@@ -13,7 +13,7 @@
 
 ### Installation
 
-In your project folder, add `"@happy/tailwind": "workspace:*"` to the `devDependecies` of your `package.json` (ensure `tailwindcss` and `postcss` are also installed as a `devDepencies`)
+In your project folder, add `"@happy/tailwind": "workspace:*"` to the `devDependecies` of your `package.json` (ensure `tailwindcss` and `postcss` are also installed as a `devDependencies`)
 
 ### Additional setup
 

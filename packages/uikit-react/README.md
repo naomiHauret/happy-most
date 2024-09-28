@@ -10,7 +10,7 @@ UI element used across Happy web apps.
 
 In your project folder:
 
-1. Add `"@happy/uikit-react": "workspace:*"` to the `devDependecies` of your `package.json` (ensure `@happy/tailwind` and its dependencies are also installed as `devDepencies`).
+1. Add `"@happy/uikit-react": "workspace:*"` to the `devDependecies` of your `package.json` (ensure `@happy/tailwind` and its dependencies are also installed as `devDependencies`).
 
 2. Create `app.css` file (or `base.css`, `styles.css`... whatever name suits your preferences).
 
