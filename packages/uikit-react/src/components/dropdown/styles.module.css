@@ -1,0 +1,5 @@
+.trigger {
+  @apply enabled:cursor-pointer opacity-30 bg-transparent bg-center w-5 h-5 absolute top-1/2 -translate-y-1/2 end-3 bg-no-repeat;
+  background-size: contain;
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxZW0iIGhlaWdodD0iMWVtIiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2Utd2lkdGg9IjIiIHN0eWxlPSJvdmVyZmxvdzp2aXNpYmxlO2NvbG9yOmN1cnJlbnRjb2xvciIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJtNiA5IDYgNiA2LTYiLz48L3N2Zz4=');
+}
