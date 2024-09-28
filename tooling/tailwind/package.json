@@ -14,7 +14,8 @@
     "tailwindcss": "^3.4.13"
   },
   "devDependencies": {
-    "typescript": "^5.6.2",
-    "@happy/tsconfig": "workspace:^"
+    "@happy/tsconfig": "workspace:^",
+    "tailwindcss-color-mix": "^0.0.8",
+    "typescript": "^5.6.2"
   }
 }
