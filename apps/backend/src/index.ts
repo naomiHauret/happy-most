@@ -1,7 +1,7 @@
 import { Elysia, error } from 'elysia'
 import { cors } from '@elysiajs/cors'
 import { swagger } from '@elysiajs/swagger'
-import { SupportedChainsAliases } from '@happy/chains'
+import { SUPPORTED_CHAINS, SupportedChainsAliases } from '@happy/chains'
 import { BridgeRequestParametersSchema, MakeItRainRequestParametersSchema } from './helpers'
 import { mint } from './features/mint'
 import { publicClient } from './config'
@@ -41,8 +41,14 @@ const app = new Elysia()
       if (!txRequest?.hash || !txRequest?.chain) throw new Error('Operation failed')
 
       return {
-        mint_transaction_hash: txRequest.hash,
-        burn_transaction_hash: transaction_hash,
+        mint: {
+          transaction_hash: txRequest.hash,
+          block_explorer: SUPPORTED_CHAINS[destination as SupportedChainsAliases].blockExplorers?.default
+        },
+        burn: {
+          transaction_hash: transaction_hash,
+          block_explorer: SUPPORTED_CHAINS[source as SupportedChainsAliases].blockExplorers?.default
+        },
       }
     },
     {
@@ -67,13 +73,11 @@ const app = new Elysia()
         tokenId: token_id,
         amount: 10,
       })
-      console.log(txRequest?.hash)
       if (!txRequest?.hash || !txRequest?.chain) throw new Error('Operation failed')
       const receipt = await publicClient[txRequest.chain]?.waitForTransactionReceipt({
         hash: txRequest.hash,
       })
 
-      console.log('receipt', receipt)
       return {
         transaction_hash: receipt?.transactionHash,
       }

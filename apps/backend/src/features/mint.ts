@@ -23,12 +23,6 @@ async function mint(args: {
         : args.amount,
     ],
   })
-  console.log(
-    args.destinationWalletAddress,
-    typeof args.amount === 'number'
-      ? parseUnits(String(args.amount), tokenList.tokenMap[args.tokenId].decimals)
-      : args.amount,
-  )
   const txHash = await controllerWalletClient[chainId]!!.writeContract(mintToken.request)
   return {
     hash: txHash,
