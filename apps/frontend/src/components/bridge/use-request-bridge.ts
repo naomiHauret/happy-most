@@ -1,7 +1,7 @@
 import { SUPPORTED_CHAINS, SupportedChainsAliases } from '@happy/chains'
 import tokenList from '@happy/token-lists/bridge'
 import { useAccount, useSwitchChain, useWriteContract } from 'wagmi'
-import { useMutation } from '@tanstack/react-query'
+import { type QueryKey, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '~/services/@happy/client'
 import abiSimpleERC2O from '@happy/abis/SimpleERC20'
 import { parseUnits } from 'viem'
@@ -24,7 +24,8 @@ type SubmitBridgeRequestMintParams = {
 /**
  * Bridge submission flow hook
  */
-function useRequestBridge() {
+function useRequestBridge(args: {tokenBalanceQueryKey: QueryKey}) {
+  const queryClient = useQueryClient()
   const accountData = useAccount()
   /**
    * Switch chain mutation
@@ -36,7 +37,16 @@ function useRequestBridge() {
    * Bridge flow - burn step mutation
    * The user must confirms this transaction in their wallet
    */
-  const mutationBurnTokens = useWriteContract()
+  const mutationBurnTokens = useWriteContract({
+    mutation: {
+      onSuccess() {
+        console.log("args.tokenBalanceQueryKey", args.tokenBalanceQueryKey)
+        // Refetch balance
+        queryClient.invalidateQueries({ queryKey: args.tokenBalanceQueryKey })
+
+      },
+    }
+  })
 
   /**
    * Bridge flow - sending request mutation
@@ -95,14 +105,19 @@ function useRequestBridge() {
       }
 
       if (hash && mutationSendBridgeRequest.status !== 'success') {
-        return await mutationSendBridgeRequest.mutateAsync({
+        const request = await mutationSendBridgeRequest.mutateAsync({
           source: args.source,
           destination: args.destination,
           hash,
         })
+        return request?.data
       }
       throw Error('Burn not proceeded correctly')
     },
+    onSuccess() {
+      mutationBurnTokens.reset()
+      mutationSendBridgeRequest.reset()
+    }
   })
 
   /**
@@ -112,11 +127,11 @@ function useRequestBridge() {
   async function handleSubmitRequest(args: SubmitBridgeRequestBurnParams) {
     if (mutationBridgeFlow.status === 'pending') return
     else if (
-      args.amount !== mutationBridgeFlow.variables?.amount ||
+      (args.amount !== mutationBridgeFlow.variables?.amount ||
       args.destination !== mutationBridgeFlow.variables.destination ||
       args.source !== mutationBridgeFlow.variables.source ||
-      args.tokenId !== mutationBridgeFlow.variables.tokenId ||
-      mutationBridgeFlow.data?.mint_transaction_hash
+      args.tokenId !== mutationBridgeFlow.variables.tokenId) ||
+      mutationBridgeFlow?.status === 'success'
     ) {
       // Reset mutations if args changed or if bridging was successful
       mutationBridgeFlow.reset()

@@ -19,6 +19,7 @@ function useSelectedTokenDetails(args: {
     functionName: 'balanceOf',
     args: [account?.address],
     query: {
+      refetchOnWindowFocus: true,
       // Only run the query if the contract address is valid and there's an account connected
       enabled: Boolean(isAddress(`${args?.selectedToken?.address}`) && account.isConnected),
     },

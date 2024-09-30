@@ -11,6 +11,7 @@ import { useRequestBridge, type ValidSelectedToken } from './use-request-bridge'
 import { useSelectedTokenDetails } from './use-selected-token-details'
 import abiSimpleERC2O from '@happy/abis/SimpleERC20'
 import { parseUnits } from 'viem'
+import { TransactionFlowSummary } from './transaction-summary'
 
 enum BridgeSearchParams {
   SourceChain = 'bridge-source',
@@ -78,13 +79,6 @@ const Bridge: FC<BridgeProps> = (props) => {
   const accountData = useAccount()
   const { isSupportedNetwork } = useAccountDetails()
 
-  const {
-    handleSubmitRequest,
-    mutationBridgeFlow,
-    mutationBurnTokens,
-    mutationSendBridgeRequest,
-    mutationSwitchChain,
-  } = useRequestBridge()
   // Currently selected token balance (for the given connected account)
   const tokenBalance = useSelectedTokenDetails({
     chainId: SUPPORTED_CHAINS[source].id,
@@ -96,6 +90,16 @@ const Bridge: FC<BridgeProps> = (props) => {
       : undefined,
     accountAddress: accountData?.address,
   })
+  
+
+  const {
+    handleSubmitRequest,
+    mutationBridgeFlow,
+    mutationBurnTokens,
+    mutationSendBridgeRequest,
+    mutationSwitchChain,
+  } = useRequestBridge({tokenBalanceQueryKey: tokenBalance.queryBalanceOf.queryKey})
+
 
   const querySimulateBurn = useSimulateContract({
     abi: abiSimpleERC2O,
@@ -149,7 +153,6 @@ const Bridge: FC<BridgeProps> = (props) => {
             tokenBalance?.formatted &&
             amount <= +tokenBalance?.formatted
           ) {
-            console.log('starting', source, destination, selectedToken?.key, amount)
             handleSubmitRequest({
               source,
               destination,
@@ -293,33 +296,40 @@ const Bridge: FC<BridgeProps> = (props) => {
         />
       </form>
 
-      {querySimulateBurn?.data?.result}
-      {mutationBridgeFlow.status === 'pending' && (
-        <section
-          className={recipeBox({
-            layer: '0',
-            demarcation: 'subtle',
-            className: 'animate-fadeIn',
-          })}
+      {['pending', 'error'].includes(mutationBridgeFlow.status) && <section
+        className='pt-3 animate-fadeIn'
         >
-          <p>Your request is being processed. Follow the steps as indicated below.</p>
+          <p className='text-xs pb-4 px-2 text-center text-neutral-11/70'>Your request is being processed. Follow the steps as indicated below.</p>
 
-          <ol>
-            {!isSupportedNetwork ||
-              (accountData?.chainId !== SUPPORTED_CHAINS[source].id && (
-                <li className={mutationSwitchChain.status === 'pending' ? 'animate-pulse' : ''}>
-                  Switch network
-                </li>
-              ))}
-            <li className={mutationBurnTokens.status === 'pending' ? 'animate-pulse' : ''}>
-              Sign the burn {amount} tokens transaction in your wallet
-            </li>
-            <li className={mutationBurnTokens.status === 'pending' ? 'animate-pulse' : ''}>
-              Minting tokens on {SUPPORTED_CHAINS[destination]?.name}
-            </li>
-          </ol>
-        </section>
-      )}
+          <div className='grid gap-3'>
+            <TransactionFlowSummary 
+                mutationSwitchChain={mutationSwitchChain}
+                shouldSwitchChain={!isSupportedNetwork ||
+                  (accountData?.chainId !== SUPPORTED_CHAINS[source].id)}
+                transactions={[
+                  {
+                    id: 'burn-tokens-source-tx',
+                    label: "Sign the burn transaction in your wallet",
+                    mutationStatus: mutationBurnTokens.status
+                  },
+                  {
+                    id: 'mint-tokens-destination-tx',
+                    label: "Wait for your tokens to arrive. Kick back and relax !",
+                    mutationStatus: mutationSendBridgeRequest.status
+
+                  }
+                ]}
+          
+            />
+
+          </div>
+      </section>}
+      {mutationBridgeFlow.status === 'success' && <section className='animate-appear bg-neutral-1 text-xs p-3 rounded-md text-positive-9 border border-positive-9/10' aria-live="polite">
+            <p className='font-bold'>Your transaction was processed successfully !</p>
+            <p className='font-medium text-neutral-12'>You can check your <a className="underline hover:no-underline focus:no-underline" target="_blank" href={`${mutationBridgeFlow?.data?.mint?.block_explorer?.url}/tx/${mutationBridgeFlow?.data?.mint?.transaction_hash}`}>mint transaction</a> and <a className="underline hover:no-underline focus:no-underline"  target="_blank" href={`${mutationBridgeFlow?.data?.burn?.block_explorer?.url}/tx/${mutationBridgeFlow?.data?.burn?.transaction_hash}`}>burn transaction</a></p>
+
+          </section>}
+
       <Button
         isLoading={
           [querySimulateBurn.status, mutationBridgeFlow.status].includes('pending') &&
@@ -339,6 +349,7 @@ const Bridge: FC<BridgeProps> = (props) => {
             formRef?.current?.click()
         }}
         className="w-full text-lg justify-center min-h-10"
+        intent={mutationBridgeFlow.status === 'pending' ? 'ghost' : 'primary'}
         type="button"
       >
         {mutationBridgeFlow.status === 'pending' ? 'Processing...' : 'Bridge'}
