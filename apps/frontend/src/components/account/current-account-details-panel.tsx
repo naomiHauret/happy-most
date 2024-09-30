@@ -29,7 +29,60 @@ const AccountDetailsPanel: FC<AccountDetailsPanelProps> = (props) => {
   return (
     <div className="flex flex-col gap-2 sm:gap-1">
       <div className="relative gap-2 leading-tight flex flex-col">
-        <div className="flex gap-2 pe-[12ex] w-full text-sm sm:text-xs">
+        <Collapsible.Root defaultOpen={!isSupportedNetwork} className="pe-[12ex] w-full">
+          <Collapsible.Trigger
+            className={recipeButton({
+              intent: 'neutral',
+              class: `absolute text-xs end-0 top-0 ${mutationSwitchChain?.isPending ? 'animate-pulse' : ''}`,
+              ...props.switchButtonVariantsProps,
+            })}
+          >
+            Switch
+          </Collapsible.Trigger>
+          <Collapsible.Content className="motion-safe:[&[data-state=closed]]:animate-collapseUp motion-safe:[&[data-state=open]]:animate-collapseDown">
+            <ul className="list-none flex flex-col gap-2">
+              {mutationSwitchChain.chains.map((supportedChain) => (
+                <li
+                  className="focus-within:ring-2 focus-within:ring-primary-9/25 rounded-lg"
+                  key={`switch-to-${supportedChain.id}-${props.id}`}
+                >
+                  <Button
+                    isLoading={
+                      mutationSwitchChain.isPending &&
+                      supportedChain.id === mutationSwitchChain.variables.chainId
+                    }
+                    aria-disabled={
+                      mutationSwitchChain.isPending || supportedChain.id === account?.chainId
+                    }
+                    onClick={async () => {
+                      if (mutationSwitchChain.isPending || supportedChain.id === account?.chainId)
+                        return
+                      mutationSwitchChain.reset()
+                      await mutationSwitchChain.switchChain({
+                        chainId: supportedChain.id,
+                      })
+                    }}
+                    intent="outline"
+                    className="min-h-10 gap-2 w-full text-sm"
+                  >
+                    <span className="flex w-4 sm:w-3 aspect-square">
+                      <img
+                        className="w-full h-auto"
+                        width="20"
+                        height="20"
+                        loading="lazy"
+                        src={SUPPORTED_CHAINS_ICONS[supportedChain?.id as number]}
+                        alt={account.chain?.name}
+                      />
+                    </span>
+                    <span>{supportedChain.name}</span>
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          </Collapsible.Content>
+        </Collapsible.Root>
+        <div className="flex gap-2 w-full text-sm sm:text-xs">
           <div className="w-5 aspect-square">
             {isSupportedNetwork ? (
               <>
@@ -86,59 +139,6 @@ const AccountDetailsPanel: FC<AccountDetailsPanelProps> = (props) => {
             </span>
           </div>
         </div>
-        <Collapsible.Root defaultOpen={!isSupportedNetwork} className="w-full">
-          <Collapsible.Trigger
-            className={recipeButton({
-              intent: 'neutral',
-              class: `absolute text-xs end-0 top-0 ${mutationSwitchChain?.isPending ? 'animate-pulse' : ''}`,
-              ...props.switchButtonVariantsProps,
-            })}
-          >
-            Switch
-          </Collapsible.Trigger>
-          <Collapsible.Content className="motion-safe:[&[data-state=closed]]:animate-collapseUp motion-safe:[&[data-state=open]]:animate-collapseDown">
-            <ul className="list-none flex flex-col gap-2">
-              {mutationSwitchChain.chains.map((supportedChain) => (
-                <li
-                  className="focus-within:ring-2 focus-within:ring-primary-9/25 rounded-lg"
-                  key={`switch-to-${supportedChain.id}-${props.id}`}
-                >
-                  <Button
-                    isLoading={
-                      mutationSwitchChain.isPending &&
-                      supportedChain.id === mutationSwitchChain.variables.chainId
-                    }
-                    aria-disabled={
-                      mutationSwitchChain.isPending || supportedChain.id === account?.chainId
-                    }
-                    onClick={async () => {
-                      if (mutationSwitchChain.isPending || supportedChain.id === account?.chainId)
-                        return
-                      mutationSwitchChain.reset()
-                      await mutationSwitchChain.switchChain({
-                        chainId: supportedChain.id,
-                      })
-                    }}
-                    intent="outline"
-                    className="min-h-10 gap-2 w-full text-sm"
-                  >
-                    <span className="flex w-4 sm:w-3 aspect-square">
-                      <img
-                        className="w-full h-auto"
-                        width="20"
-                        height="20"
-                        loading="lazy"
-                        src={SUPPORTED_CHAINS_ICONS[account?.chain?.id as number]}
-                        alt={account.chain?.name}
-                      />
-                    </span>
-                    <span>{supportedChain.name}</span>
-                  </Button>
-                </li>
-              ))}
-            </ul>
-          </Collapsible.Content>
-        </Collapsible.Root>
       </div>
       <div
         className={recipeBox({

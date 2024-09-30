@@ -49,13 +49,14 @@ const ConnectWallet: FC<ConnectWalletProps> = (props) => {
   return (
     <>
       <Button
-        intent="neutral"
+        intent="outline"
+        className="text-sm min-h-8"
         isLoading={account.status === 'connecting'}
         onClick={() => {
           setIsConnectModalOpen(true)
         }}
       >
-        Connect wallet
+        Sign-in
       </Button>
       <Dialog
         visibility={visibility}

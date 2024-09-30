@@ -36,6 +36,15 @@ const AccountDesktop: FC = () => {
   return (
     <Popover.Root>
       <Popover.Trigger className="flex items-stretch gap-1.5 lg:gap-3 [&[data-state=open]_[data-part=account-address]]:border-neutral-11/10 [&[data-state=open]_[data-part=account-address]]:text-neutral-11 [&[data-state=open]_[data-part=account-address]]:bg-mix-neutral-11 [&[data-state=open]_[data-part=account-address]]:bg-mix-amount-5">
+        <span
+          data-part="account-address"
+          className="flex gap-2 text-xs py-1.5 items-center ps-2 pe-3 rounded-md border text-neutral-11/60 border-transparent bg-neutral-1/80"
+        >
+          {shortenedAddress}
+          <Popover.Indicator className="[&[data-state=open]]:rotate-180">
+            <BiChevronDown />
+          </Popover.Indicator>
+        </span>
         <span className="flex text-xs rounded-md border text-neutral-11/60 border-transparent bg-neutral-1/80">
           <span className="w-9 flex items-center rounded-md lg:rounded-e-none justify-center bg-mix-neutral-11 bg-mix-amount-10 aspect-square">
             <span className="flex justify-center items-center w-5 aspect-square">
@@ -88,15 +97,6 @@ const AccountDesktop: FC = () => {
               <>Not connected</>
             )}
           </span>
-        </span>
-        <span
-          data-part="account-address"
-          className="flex gap-2 text-xs py-1.5 items-center ps-2 pe-3 rounded-md border text-neutral-11/60 border-transparent bg-neutral-1/80"
-        >
-          {shortenedAddress}
-          <Popover.Indicator className="[&[data-state=open]]:rotate-180">
-            <BiChevronDown />
-          </Popover.Indicator>
         </span>
       </Popover.Trigger>
       <Popover.Positioner>
