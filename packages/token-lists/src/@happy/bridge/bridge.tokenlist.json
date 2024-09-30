@@ -1,0 +1,349 @@
+{
+  "name": "Happy Bridge Tokens List",
+  "logoURI": "https://www.svgrepo.com/show/299141/happy-smile.svg",
+  "keywords": ["happychain", "op stack"],
+  "tags": {
+    "stablecoin": {
+      "name": "Stablecoin",
+      "description": "Tokens that are fixed to an external asset, e.g. the US dollar"
+    },
+    "gamefi": {
+      "name": "GameFi",
+      "description": "Tokens that allow players to earn cryptocurrency and truly own in-game assets through tokenization"
+    },
+    "memes": {
+      "name": "Memes",
+      "description": "Tokens that don't take themselves seriously."
+    }
+  },
+  "timestamp": "2024-09-27T20:26:54+00:00",
+  "tokens": [
+    {
+      "chainId": 216,
+      "address": "0x7eac43bda2f5f286a6a58555be13f40f214316e7",
+      "symbol": "RED",
+      "name": "Red Coin",
+      "decimals": 18,
+      "logoURI": "https://www.svgrepo.com/show/407314/red-circle.svg",
+      "tags": ["gamefi"],
+      "extensions": {
+        "bridge": {
+          "11155420": {
+            "tokenAddress": "0x6a5daafeee499ab9f926081455c130e135677928"
+          }
+        }
+      }
+    },
+    {
+      "chainId": 11155420,
+      "address": "0x6a5daafeee499ab9f926081455c130e135677928",
+      "symbol": "RED",
+      "name": "Red Coin",
+      "decimals": 18,
+      "logoURI": "https://www.svgrepo.com/show/407314/red-circle.svg",
+      "tags": ["gamefi"],
+      "extensions": {
+        "bridge": {
+          "216": {
+            "tokenAddress": "0x7eac43bda2f5f286a6a58555be13f40f214316e7"
+          }
+        }
+      }
+    },
+    {
+      "chainId": 216,
+      "address": "0xc3d675794811f123d23cf6526f4304af42022e8e",
+      "symbol": "BLUE",
+      "name": "Blue Coin",
+      "decimals": 18,
+      "logoURI": "https://www.svgrepo.com/show/404854/blue-circle.svg",
+      "tags": ["memes"],
+      "extensions": {
+        "bridge": {
+          "11155420": {
+            "tokenAddress": "0x7e3c5ee2b873413258cdf36685e6907a3439c8f9"
+          }
+        }
+      }
+    },
+    {
+      "chainId": 11155420,
+      "address": "0x7e3c5ee2b873413258cdf36685e6907a3439c8f9",
+      "symbol": "BLUE",
+      "name": "Blue Coin",
+      "decimals": 18,
+      "logoURI": "https://www.svgrepo.com/show/404854/blue-circle.svg",
+      "tags": ["memes"],
+      "extensions": {
+        "bridge": {
+          "216": {
+            "tokenAddress": "0xc3d675794811f123d23cf6526f4304af42022e8e"
+          }
+        }
+      }
+    },
+    {
+      "chainId": 216,
+      "address": "0x658f8615e50a5c642ece6ca98c50282e4cbfb1b6",
+      "symbol": "YLW",
+      "name": "Yellow Coin",
+      "decimals": 18,
+      "logoURI": "https://www.svgrepo.com/show/408266/yellow-circle.svg",
+      "tags": ["stablecoin"],
+      "extensions": {
+        "bridge": {
+          "11155420": {
+            "tokenAddress": "0x814db1023ed72de2836cdb90de3962695e040ad0"
+          }
+        }
+      }
+    },
+    {
+      "chainId": 11155420,
+      "address": "0x814db1023ed72de2836cdb90de3962695e040ad0",
+      "symbol": "YLW",
+      "name": "Yellow Coin",
+      "decimals": 18,
+      "logoURI": "https://www.svgrepo.com/show/408266/yellow-circle.svg",
+      "tags": ["stablecoin"],
+      "extensions": {
+        "bridge": {
+          "216": {
+            "tokenAddress": "0x658f8615e50a5c642ece6ca98c50282e4cbfb1b6"
+          }
+        }
+      }
+    },
+    {
+      "chainId": 216,
+      "address": "0xf39835c829a08b5c516fd71a3c8ce349dd5cf4a1",
+      "symbol": "GRN",
+      "name": "Green Coin",
+      "decimals": 18,
+      "logoURI": "https://www.svgrepo.com/show/405751/green-circle.svg",
+      "tags": ["memes"],
+      "extensions": {
+        "bridge": {
+          "11155420": {
+            "tokenAddress": "0x8f6a9f278ff76bc323dd67a629de7c2b1a3e757a"
+          }
+        }
+      }
+    },
+    {
+      "chainId": 11155420,
+      "address": "0x8f6a9f278ff76bc323dd67a629de7c2b1a3e757a",
+      "symbol": "GRN",
+      "name": "Green Coin",
+      "decimals": 18,
+      "logoURI": "https://www.svgrepo.com/show/405751/green-circle.svg",
+      "tags": ["memes"],
+      "extensions": {
+        "bridge": {
+          "216": {
+            "tokenAddress": "0xf39835c829a08b5c516fd71a3c8ce349dd5cf4a1"
+          }
+        }
+      }
+    },
+    {
+      "chainId": 216,
+      "address": "0x5c47cd7c6c7f99f7a506ed005df8477fe1ea8c49",
+      "symbol": "PRPL",
+      "name": "Purple Coin",
+      "decimals": 18,
+      "logoURI": "https://www.svgrepo.com/show/407265/purple-circle.svg",
+      "tags": ["gamefi"],
+      "extensions": {
+        "bridge": {
+          "11155420": {
+            "tokenAddress": "0xe16b7ca7011ac5b1EB5cC0545Db3Ae51a53F1b83"
+          }
+        }
+      }
+    },
+    {
+      "chainId": 11155420,
+      "address": "0xe16b7ca7011ac5b1EB5cC0545Db3Ae51a53F1b83",
+      "symbol": "PRPL",
+      "name": "Purple Coin",
+      "decimals": 18,
+      "logoURI": "https://www.svgrepo.com/show/407265/purple-circle.svg",
+      "tags": ["gamefi"],
+      "extensions": {
+        "bridge": {
+          "216": {
+            "tokenAddress": "0x5c47cd7c6c7f99f7a506ed005df8477fe1ea8c49"
+          }
+        }
+      }
+    }
+  ],
+  "tokenMap": {
+    "216_0x7eac43bda2f5f286a6a58555be13f40f214316e7": {
+      "chainId": 216,
+      "address": "0x7eac43bda2f5f286a6a58555be13f40f214316e7",
+      "symbol": "RED",
+      "name": "Red Coin",
+      "decimals": 18,
+      "logoURI": "https://www.svgrepo.com/show/407314/red-circle.svg",
+      "tags": ["gamefi"],
+      "extensions": {
+        "bridge": {
+          "11155420": {
+            "tokenAddress": "0x6a5daafeee499ab9f926081455c130e135677928"
+          }
+        }
+      }
+    },
+    "11155420_0x6a5daafeee499ab9f926081455c130e135677928": {
+      "chainId": 11155420,
+      "address": "0x6a5daafeee499ab9f926081455c130e135677928",
+      "symbol": "RED",
+      "name": "Red Coin",
+      "decimals": 18,
+      "logoURI": "https://www.svgrepo.com/show/407314/red-circle.svg",
+      "tags": ["gamefi"],
+      "extensions": {
+        "bridge": {
+          "216": {
+            "tokenAddress": "0x7eac43bda2f5f286a6a58555be13f40f214316e7"
+          }
+        }
+      }
+    },
+    "216_0xc3d675794811f123d23cf6526f4304af42022e8e": {
+      "chainId": 216,
+      "address": "0xc3d675794811f123d23cf6526f4304af42022e8e",
+      "symbol": "BLUE",
+      "name": "Blue Coin",
+      "decimals": 18,
+      "logoURI": "https://www.svgrepo.com/show/404854/blue-circle.svg",
+      "tags": ["memes"],
+      "extensions": {
+        "bridge": {
+          "11155420": {
+            "tokenAddress": "0x7e3c5ee2b873413258cdf36685e6907a3439c8f9"
+          }
+        }
+      }
+    },
+    "11155420_0x7e3c5ee2b873413258cdf36685e6907a3439c8f9": {
+      "chainId": 11155420,
+      "address": "0x7e3c5ee2b873413258cdf36685e6907a3439c8f9",
+      "symbol": "BLUE",
+      "name": "Blue Coin",
+      "decimals": 18,
+      "logoURI": "https://www.svgrepo.com/show/404854/blue-circle.svg",
+      "tags": ["memes"],
+      "extensions": {
+        "bridge": {
+          "216": {
+            "tokenAddress": "0xc3d675794811f123d23cf6526f4304af42022e8e"
+          }
+        }
+      }
+    },
+    "216_0x658f8615e50a5c642ece6ca98c50282e4cbfb1b6": {
+      "chainId": 216,
+      "address": "0x658f8615e50a5c642ece6ca98c50282e4cbfb1b6",
+      "symbol": "YLW",
+      "name": "Yellow Coin",
+      "decimals": 18,
+      "logoURI": "https://www.svgrepo.com/show/408266/yellow-circle.svg",
+      "tags": ["stablecoin"],
+      "extensions": {
+        "bridge": {
+          "11155420": {
+            "tokenAddress": "0x814db1023ed72de2836cdb90de3962695e040ad0"
+          }
+        }
+      }
+    },
+    "11155420_0x814db1023ed72de2836cdb90de3962695e040ad0": {
+      "chainId": 11155420,
+      "address": "0x814db1023ed72de2836cdb90de3962695e040ad0",
+      "symbol": "YLW",
+      "name": "Yellow Coin",
+      "decimals": 18,
+      "logoURI": "https://www.svgrepo.com/show/408266/yellow-circle.svg",
+      "tags": ["stablecoin"],
+      "extensions": {
+        "bridge": {
+          "216": {
+            "tokenAddress": "0x658f8615e50a5c642ece6ca98c50282e4cbfb1b6"
+          }
+        }
+      }
+    },
+    "216_0xf39835c829a08b5c516fd71a3c8ce349dd5cf4a1": {
+      "chainId": 216,
+      "address": "0xf39835c829a08b5c516fd71a3c8ce349dd5cf4a1",
+      "symbol": "GRN",
+      "name": "Green Coin",
+      "decimals": 18,
+      "logoURI": "https://www.svgrepo.com/show/405751/green-circle.svg",
+      "tags": ["memes"],
+      "extensions": {
+        "bridge": {
+          "11155420": {
+            "tokenAddress": "0x8f6a9f278ff76bc323dd67a629de7c2b1a3e757a"
+          }
+        }
+      }
+    },
+    "11155420_0x8f6a9f278ff76bc323dd67a629de7c2b1a3e757a": {
+      "chainId": 11155420,
+      "address": "0x8f6a9f278ff76bc323dd67a629de7c2b1a3e757a",
+      "symbol": "GRN",
+      "name": "Green Coin",
+      "decimals": 18,
+      "logoURI": "https://www.svgrepo.com/show/405751/green-circle.svg",
+      "tags": ["memes"],
+      "extensions": {
+        "bridge": {
+          "216": {
+            "tokenAddress": "0xf39835c829a08b5c516fd71a3c8ce349dd5cf4a1"
+          }
+        }
+      }
+    },
+    "216_0x5c47cd7c6c7f99f7a506ed005df8477fe1ea8c49": {
+      "chainId": 216,
+      "address": "0x5c47cd7c6c7f99f7a506ed005df8477fe1ea8c49",
+      "symbol": "PRPL",
+      "name": "Purple Coin",
+      "decimals": 18,
+      "logoURI": "https://www.svgrepo.com/show/407265/purple-circle.svg",
+      "tags": ["gamefi"],
+      "extensions": {
+        "bridge": {
+          "11155420": {
+            "tokenAddress": "0xe16b7ca7011ac5b1EB5cC0545Db3Ae51a53F1b83"
+          }
+        }
+      }
+    },
+    "11155420_0xe16b7ca7011ac5b1EB5cC0545Db3Ae51a53F1b83": {
+      "chainId": 11155420,
+      "address": "0xe16b7ca7011ac5b1EB5cC0545Db3Ae51a53F1b83",
+      "symbol": "PRPL",
+      "name": "Purple Coin",
+      "decimals": 18,
+      "logoURI": "https://www.svgrepo.com/show/407265/purple-circle.svg",
+      "tags": ["gamefi"],
+      "extensions": {
+        "bridge": {
+          "216": {
+            "tokenAddress": "0x5c47cd7c6c7f99f7a506ed005df8477fe1ea8c49"
+          }
+        }
+      }
+    }
+  },
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  }
+}

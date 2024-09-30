@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "exports": {
-    "./bridge": "./src/@happy/bridge.json"
+    "./bridge": "./src/@happy/bridge/bridge.tokenlist.json"
   },
   "license": "MIT",
   "devDependencies": {
