@@ -40,7 +40,6 @@ function useRequestBridge(args: {tokenBalanceQueryKey: QueryKey}) {
   const mutationBurnTokens = useWriteContract({
     mutation: {
       onSuccess() {
-        console.log("args.tokenBalanceQueryKey", args.tokenBalanceQueryKey)
         // Refetch balance
         queryClient.invalidateQueries({ queryKey: args.tokenBalanceQueryKey })
 
