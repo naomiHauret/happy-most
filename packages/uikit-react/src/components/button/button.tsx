@@ -1,6 +1,7 @@
 import { type HTMLArkProps, ark } from '@ark-ui/react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { forwardRef } from 'react'
+import { BiLoader } from 'react-icons/bi'
 
 /**
  * Brand styling for any UI element that implements a button-like appearance/behaviour (button, link)
@@ -52,6 +53,7 @@ const recipeButton = cva(
       },
       scale: {
         default: 'px-[1em] py-[0.1em] rounded-md border',
+        small: 'px-[0.75em] py-[0.1em] rounded-md border',
       },
       label: {
         default: 'font-semibold',
@@ -66,11 +68,22 @@ const recipeButton = cva(
 )
 
 type ButtonVariantsProps = VariantProps<typeof recipeButton>
-interface ButtonProps extends ButtonVariantsProps, HTMLArkProps<'button'> {}
+interface ButtonProps extends ButtonVariantsProps, HTMLArkProps<'button'> {
+  isLoading?: boolean
+}
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ scale, intent, className, ...rest }, ref) => {
-    return <ark.button className={recipeButton({ scale, intent, className })} ref={ref} {...rest} />
+  ({ scale, intent, className, isLoading, children, ...rest }, ref) => {
+    return (
+      <ark.button className={recipeButton({ scale, intent, className })} ref={ref} {...rest}>
+        {isLoading && (
+          <span data-loader className="pe-1">
+            <BiLoader className="animate-spin text-[1.25em]" />
+          </span>
+        )}
+        {children}
+      </ark.button>
+    )
   },
 )
 

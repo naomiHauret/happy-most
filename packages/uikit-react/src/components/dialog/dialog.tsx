@@ -15,6 +15,7 @@ const recipeDialogBase = cva(
     variants: {
       scale: {
         default: 'max-sm:rounded-b-none max-h-[90vh] pb-3 sm:pb-0 sm:max-w-xl',
+        small: 'max-sm:rounded-b-none max-h-[90vh] pb-3 sm:pb-0 sm:max-w-sm',
       },
     },
     defaultVariants: {
