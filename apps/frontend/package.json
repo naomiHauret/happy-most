@@ -22,16 +22,23 @@
     "vite": "^5.4.8"
   },
   "dependencies": {
+    "@ark-ui/react": "^3.13.0",
     "@happy/abis": "workspace:*",
     "@happy/chains": "workspace:^",
     "@happy/connector": "workspace:^",
+    "@happy/token-lists": "workspace:*",
     "@happy/uikit-react": "workspace:^",
     "@tanstack/react-query": "^5.56.2",
     "@tanstack/react-router": "^1.58.9",
     "@tanstack/router-devtools": "^1.58.9",
+    "@tanstack/router-zod-adapter": "^1.58.11",
+    "class-variance-authority": "^0.7.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-icons": "^5.3.0",
+    "use-debounce": "^10.0.3",
     "viem": "2.x",
-    "wagmi": "^2.12.14"
+    "wagmi": "^2.12.14",
+    "zod": "^3.23.8"
   }
 }
