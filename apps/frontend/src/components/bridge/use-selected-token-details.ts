@@ -1,7 +1,6 @@
 import { useAccount, useReadContract } from 'wagmi'
 import abiSimpleERC2O from '@happy/abis/SimpleERC20'
 import { formatUnits, isAddress } from 'viem'
-import { useMemo } from 'react'
 
 function useSelectedTokenDetails(args: {
   chainId: number
@@ -20,20 +19,19 @@ function useSelectedTokenDetails(args: {
     args: [account?.address],
     query: {
       refetchOnWindowFocus: true,
+      select(data): { value: bigint; formatted: string; decimals: number } {
+        return {
+          value: (data as bigint) ?? 0n,
+          formatted: `${formatUnits(data as bigint, args?.selectedToken?.decimals as number)}`,
+          decimals: args?.selectedToken?.decimals as number,
+        }
+      },
       // Only run the query if the contract address is valid and there's an account connected
       enabled: Boolean(isAddress(`${args?.selectedToken?.address}`) && account.isConnected),
     },
   })
 
-  const formattedBalance = useMemo(() => {
-    if (balanceOf?.data) {
-      return `${formatUnits(balanceOf?.data as bigint, args?.selectedToken?.decimals as number)}`
-    }
-    return '0'
-  }, [balanceOf?.data])
-
   return {
-    formatted: formattedBalance,
     queryBalanceOf: balanceOf,
   }
 }

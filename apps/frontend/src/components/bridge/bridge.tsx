@@ -1,7 +1,7 @@
 import { SUPPORTED_CHAINS, SupportedChainsAliases } from '@happy/chains'
 import tokenList from '@happy/token-lists/bridge'
 import { type DialogProps, Button, Callout, Input, recipeBox } from '@happy/uikit-react'
-import { useEffect, useRef, type FC } from 'react'
+import { type LegacyRef, useEffect, useRef, type FC } from 'react'
 import { TbArrowsExchange2 } from 'react-icons/tb'
 import { useAccount, useSimulateContract } from 'wagmi'
 import { BiChevronDown } from 'react-icons/bi'
@@ -77,7 +77,7 @@ const Bridge: FC<BridgeProps> = (props) => {
 
   // Currently connected account
   const accountData = useAccount()
-  const { isSupportedNetwork } = useAccountDetails()
+  const { isSupportedNetwork, gasBalance } = useAccountDetails()
 
   // Currently selected token balance (for the given connected account)
   const tokenBalance = useSelectedTokenDetails({
@@ -90,7 +90,6 @@ const Bridge: FC<BridgeProps> = (props) => {
       : undefined,
     accountAddress: accountData?.address,
   })
-  
 
   const {
     handleSubmitRequest,
@@ -98,8 +97,10 @@ const Bridge: FC<BridgeProps> = (props) => {
     mutationBurnTokens,
     mutationSendBridgeRequest,
     mutationSwitchChain,
-  } = useRequestBridge({tokenBalanceQueryKey: tokenBalance.queryBalanceOf.queryKey})
-
+  } = useRequestBridge({
+    tokenBalanceQueryKey: tokenBalance.queryBalanceOf.queryKey,
+    gasBalanceQueryKey: gasBalance.queryKey,
+  })
 
   const querySimulateBurn = useSimulateContract({
     abi: abiSimpleERC2O,
@@ -150,8 +151,8 @@ const Bridge: FC<BridgeProps> = (props) => {
             isValid &&
             amount &&
             amount > 0 &&
-            tokenBalance?.formatted &&
-            amount <= +tokenBalance?.formatted
+            tokenBalance?.queryBalanceOf?.data &&
+            amount <= +tokenBalance?.queryBalanceOf?.data?.formatted
           ) {
             handleSubmitRequest({
               source,
@@ -194,7 +195,11 @@ const Bridge: FC<BridgeProps> = (props) => {
                   placeholder="0.0001"
                   step="0.000000000000000001"
                   min="0"
-                  max={tokenBalance?.formatted ? tokenBalance?.formatted : '0'}
+                  max={
+                    tokenBalance?.queryBalanceOf?.data?.formatted
+                      ? tokenBalance?.queryBalanceOf?.data?.formatted
+                      : '0'
+                  }
                   inputMode="decimal"
                   inputClass="font-bold"
                   intent="ghost"
@@ -225,7 +230,8 @@ const Bridge: FC<BridgeProps> = (props) => {
                   <span>
                     {tokenBalance?.queryBalanceOf?.status === 'success' ? (
                       <>
-                        Your balance: {tokenBalance?.formatted} {selectedToken?.value?.symbol}
+                        Your balance: {tokenBalance?.queryBalanceOf?.data?.formatted}{' '}
+                        {selectedToken?.value?.symbol}
                       </>
                     ) : tokenBalance?.queryBalanceOf?.status === 'pending' &&
                       accountData.isConnected ? (
@@ -240,8 +246,11 @@ const Bridge: FC<BridgeProps> = (props) => {
                   type="button"
                   aria-disabled={mutationBridgeFlow.status === 'pending'}
                   onClick={() => {
-                    handleOnSetAmountAsMaxBalance(tokenBalance?.formatted)
-                    inputAmountRef.current = +tokenBalance?.formatted
+                    handleOnSetAmountAsMaxBalance(
+                      tokenBalance?.queryBalanceOf?.data?.formatted as string,
+                    )
+                    inputAmountRef.current = +(tokenBalance?.queryBalanceOf?.data
+                      ?.formatted as string)
                   }}
                   className="cursor-pointer absolute inset-0 w-full h-full z-10 opacity-0"
                 >
@@ -281,14 +290,14 @@ const Bridge: FC<BridgeProps> = (props) => {
           />
         </div>
         <input
-          ref={formRef}
+          ref={formRef as unknown as LegacyRef<HTMLInputElement>}
           aria-disabled={
             isValid === false ||
             !amount ||
             amount === 0 ||
-            !tokenBalance?.formatted ||
-            +tokenBalance?.formatted === 0 ||
-            amount > +tokenBalance?.formatted ||
+            !tokenBalance?.queryBalanceOf?.data?.formatted ||
+            +tokenBalance?.queryBalanceOf?.data?.formatted === 0 ||
+            amount > +tokenBalance?.queryBalanceOf?.data?.formatted ||
             mutationBridgeFlow.status === 'pending'
           }
           type="submit"
@@ -296,46 +305,67 @@ const Bridge: FC<BridgeProps> = (props) => {
         />
       </form>
 
-      {['pending', 'error'].includes(mutationBridgeFlow.status) && <section
-        className='pt-3 animate-fadeIn'
-        >
-          <p className='text-xs pb-4 px-2 text-center text-neutral-11/70'>Your request is being processed. Follow the steps as indicated below.</p>
+      {['pending', 'error'].includes(mutationBridgeFlow.status) && (
+        <section className="pt-3 animate-fadeIn">
+          <p className="text-xs pb-4 px-2 text-center text-neutral-11/70">
+            Your request is being processed. Follow the steps as indicated below.
+          </p>
 
-          <div className='grid gap-3'>
-            <TransactionFlowSummary 
-                mutationSwitchChain={mutationSwitchChain}
-                shouldSwitchChain={!isSupportedNetwork ||
-                  (accountData?.chainId !== SUPPORTED_CHAINS[source].id)}
-                transactions={[
-                  {
-                    id: 'burn-tokens-source-tx',
-                    label: "Sign the burn transaction in your wallet",
-                    mutationStatus: mutationBurnTokens.status
-                  },
-                  {
-                    id: 'mint-tokens-destination-tx',
-                    label: "Wait for your tokens to arrive. Kick back and relax !",
-                    mutationStatus: mutationSendBridgeRequest.status
-
-                  }
-                ]}
-          
+          <div className="grid gap-3">
+            <TransactionFlowSummary
+              mutationSwitchChain={mutationSwitchChain}
+              shouldSwitchChain={
+                !isSupportedNetwork || accountData?.chainId !== SUPPORTED_CHAINS[source].id
+              }
+              transactions={[
+                {
+                  id: 'burn-tokens-source-tx',
+                  label: 'Sign the burn transaction in your wallet',
+                  mutationStatus: mutationBurnTokens.status,
+                },
+                {
+                  id: 'mint-tokens-destination-tx',
+                  label: 'Wait for your tokens to arrive. Kick back and relax !',
+                  mutationStatus: mutationSendBridgeRequest.status,
+                },
+              ]}
             />
-
           </div>
-      </section>}
-      {mutationBridgeFlow.status === 'success' && <section className='animate-appear bg-neutral-1 text-xs p-3 rounded-md text-positive-9 border border-positive-9/10' aria-live="polite">
-            <p className='font-bold'>Your transaction was processed successfully !</p>
-            <p className='font-medium text-neutral-12'>You can check your <a className="underline hover:no-underline focus:no-underline" target="_blank" href={`${mutationBridgeFlow?.data?.mint?.block_explorer?.url}/tx/${mutationBridgeFlow?.data?.mint?.transaction_hash}`}>mint transaction</a> and <a className="underline hover:no-underline focus:no-underline"  target="_blank" href={`${mutationBridgeFlow?.data?.burn?.block_explorer?.url}/tx/${mutationBridgeFlow?.data?.burn?.transaction_hash}`}>burn transaction</a></p>
-
-          </section>}
+        </section>
+      )}
+      {mutationBridgeFlow.status === 'success' && (
+        <section
+          className="animate-appear bg-neutral-1 text-xs p-3 rounded-md text-positive-9 border border-positive-9/10"
+          aria-live="polite"
+        >
+          <p className="font-bold">Your transaction was processed successfully !</p>
+          <p className="font-medium text-neutral-12">
+            You can check your{' '}
+            <a
+              className="underline hover:no-underline focus:no-underline"
+              target="_blank"
+              href={`${mutationBridgeFlow?.data?.mint?.block_explorer?.url}/tx/${mutationBridgeFlow?.data?.mint?.transaction_hash}`}
+            >
+              mint transaction
+            </a>{' '}
+            and{' '}
+            <a
+              className="underline hover:no-underline focus:no-underline"
+              target="_blank"
+              href={`${mutationBridgeFlow?.data?.burn?.block_explorer?.url}/tx/${mutationBridgeFlow?.data?.burn?.transaction_hash}`}
+            >
+              burn transaction
+            </a>
+          </p>
+        </section>
+      )}
 
       <Button
         isLoading={
           [querySimulateBurn.status, mutationBridgeFlow.status].includes('pending') &&
           !!amount &&
           amount > 0 &&
-          amount <= +tokenBalance?.formatted
+          amount <= +(tokenBalance?.queryBalanceOf?.data?.formatted as string)
         }
         aria-disabled={
           [querySimulateBurn.status, mutationBridgeFlow.status].includes('pending') ||
@@ -346,7 +376,8 @@ const Bridge: FC<BridgeProps> = (props) => {
             ![querySimulateBurn.status, mutationBridgeFlow.status].includes('pending') &&
             querySimulateBurn.status !== 'error'
           )
-            formRef?.current?.click()
+            if (formRef?.current === null || !formRef?.current) return
+          ;(formRef.current as unknown as HTMLInputElement).click()
         }}
         className="w-full text-lg justify-center min-h-10"
         intent={mutationBridgeFlow.status === 'pending' ? 'ghost' : 'primary'}
@@ -359,7 +390,7 @@ const Bridge: FC<BridgeProps> = (props) => {
           You can't bridge a negative amount of tokens.
         </Callout>
       )}
-      {(amount ?? 0) > (Number(tokenBalance?.formatted) ?? 0) && (
+      {(amount ?? 0) > (Number(tokenBalance?.queryBalanceOf?.data?.formatted) ?? 0) && (
         <Callout className="motion-safe:animate-growIn">
           You don't have this amount of tokens in your wallet.
         </Callout>

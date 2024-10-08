@@ -1,10 +1,11 @@
+import abiSimpleERC2O from '@happy/abis/SimpleERC20'
 import { SUPPORTED_CHAINS, SupportedChainsAliases } from '@happy/chains'
 import tokenList from '@happy/token-lists/bridge'
-import { useAccount, useSwitchChain, useWriteContract } from 'wagmi'
 import { type QueryKey, useMutation, useQueryClient } from '@tanstack/react-query'
-import { apiClient } from '~/services/@happy/client'
-import abiSimpleERC2O from '@happy/abis/SimpleERC20'
+import { useEffect } from 'react'
 import { parseUnits } from 'viem'
+import { useAccount, useSwitchChain, useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
+import { apiClient } from '~/services/@happy/client'
 
 type ValidSelectedToken = keyof typeof tokenList.tokenMap
 type BridgeRequestCommonParams = {
@@ -21,10 +22,14 @@ type SubmitBridgeRequestMintParams = {
   hash: `0x${string}`
 } & BridgeRequestCommonParams
 
+type UseRequestBridgeArgs = {
+  tokenBalanceQueryKey: QueryKey
+  gasBalanceQueryKey: QueryKey
+}
 /**
  * Bridge submission flow hook
  */
-function useRequestBridge(args: {tokenBalanceQueryKey: QueryKey}) {
+function useRequestBridge(args: UseRequestBridgeArgs) {
   const queryClient = useQueryClient()
   const accountData = useAccount()
   /**
@@ -39,12 +44,18 @@ function useRequestBridge(args: {tokenBalanceQueryKey: QueryKey}) {
    */
   const mutationBurnTokens = useWriteContract({
     mutation: {
-      onSuccess() {
-        // Refetch balance
-        queryClient.invalidateQueries({ queryKey: args.tokenBalanceQueryKey })
-
+      onSettled() {
+        queryClient.invalidateQueries({
+          queryKey: args.gasBalanceQueryKey,
+        })
       },
-    }
+    },
+  })
+  const burnTransactionReceipt = useWaitForTransactionReceipt({
+    hash: mutationBurnTokens.data,
+    query: {
+      enabled: mutationBurnTokens.data ? true : false,
+    },
   })
 
   /**
@@ -116,8 +127,17 @@ function useRequestBridge(args: {tokenBalanceQueryKey: QueryKey}) {
     onSuccess() {
       mutationBurnTokens.reset()
       mutationSendBridgeRequest.reset()
-    }
+    },
   })
+
+  /**
+   * Refetch bridged token balance (via invalidate query) when burn transaction is successful
+   */
+  useEffect(() => {
+    if (burnTransactionReceipt.data) {
+      queryClient.invalidateQueries({ queryKey: args.tokenBalanceQueryKey })
+    }
+  }, [burnTransactionReceipt.data])
 
   /**
    * Submission flow helper function
@@ -126,10 +146,10 @@ function useRequestBridge(args: {tokenBalanceQueryKey: QueryKey}) {
   async function handleSubmitRequest(args: SubmitBridgeRequestBurnParams) {
     if (mutationBridgeFlow.status === 'pending') return
     else if (
-      (args.amount !== mutationBridgeFlow.variables?.amount ||
+      args.amount !== mutationBridgeFlow.variables?.amount ||
       args.destination !== mutationBridgeFlow.variables.destination ||
       args.source !== mutationBridgeFlow.variables.source ||
-      args.tokenId !== mutationBridgeFlow.variables.tokenId) ||
+      args.tokenId !== mutationBridgeFlow.variables.tokenId ||
       mutationBridgeFlow?.status === 'success'
     ) {
       // Reset mutations if args changed or if bridging was successful
@@ -146,6 +166,7 @@ function useRequestBridge(args: {tokenBalanceQueryKey: QueryKey}) {
     mutationBurnTokens,
     mutationSendBridgeRequest,
     mutationSwitchChain,
+    burnTransactionReceipt,
   }
 }
 
