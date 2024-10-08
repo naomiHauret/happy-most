@@ -18,7 +18,7 @@ function RootComponent() {
           <Account preferredChainUrlSearchParamKey={BridgeSearchParams.SourceChain} />
         </div>
       </div>
-      <div className="pt-2 px-2 font-semibold max-w-sm flex justify-between mx-auto text-sm text-neutral-11 gap-2">
+      <div className="p-2 font-semibold max-w-sm flex justify-between mx-auto text-sm text-neutral-11 gap-2">
         <Link
           to={AppRoutes.home}
           //@ts-ignore

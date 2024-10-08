@@ -33,7 +33,7 @@ const CardChain: FC<CardChainProps> = (props) => {
         layer: '0',
         demarcation: 'subtle',
         className:
-          'px-3 text-[1rem] h-inherit @xs:px-6 py-3 w-full grid items-center leading-tight',
+          'px-3 text-[1rem] h-inherit @xs:px-6 py-3 w-full grid items-baseline leading-tight',
       })}
     >
       <span className="text-[0.7em] font-medium text-neutral-11">{props.flowIndication}</span>
