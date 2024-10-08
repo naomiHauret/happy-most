@@ -43,11 +43,13 @@ const app = new Elysia()
       return {
         mint: {
           transaction_hash: txRequest.hash,
-          block_explorer: SUPPORTED_CHAINS[destination as SupportedChainsAliases].blockExplorers?.default
+          block_explorer:
+            SUPPORTED_CHAINS[destination as SupportedChainsAliases].blockExplorers?.default,
         },
         burn: {
           transaction_hash: transaction_hash,
-          block_explorer: SUPPORTED_CHAINS[source as SupportedChainsAliases].blockExplorers?.default
+          block_explorer:
+            SUPPORTED_CHAINS[source as SupportedChainsAliases].blockExplorers?.default,
         },
       }
     },
