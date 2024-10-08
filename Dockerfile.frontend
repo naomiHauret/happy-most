@@ -1,0 +1,26 @@
+# Adjust NODE_VERSION as desired
+ARG NODE_VERSION=21.5.0
+FROM node:${NODE_VERSION}-slim as builder
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the entire monorepo to the container
+COPY . .
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Install dependencies for the entire monorepo
+RUN pnpm install
+
+# Set the working directory to the frontend folder
+WORKDIR /app/apps/frontend
+
+EXPOSE 8043
+
+RUN pnpm run build
+
+FROM pierrezemb/gostatic
+
+COPY --from=builder /app/apps/frontend/dist/ /srv/http/

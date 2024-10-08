@@ -1,0 +1,20 @@
+# Use the official Bun image
+FROM oven/bun:1.0
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the entire monorepo to the container (necessary to access dependencies from other packages)
+COPY . .
+
+# Install dependencies for the entire monorepo
+RUN bun install
+
+# Set the working directory to the backend folder
+WORKDIR /app/apps/backend
+
+# Expose backend port (replace 3000 if you're using another value)
+EXPOSE 3000
+
+# Start the backend application
+CMD ["bun", "run", "start"]

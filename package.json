@@ -4,7 +4,9 @@
   "description": "Monorepo for Happy chain front-end assignment.",
   "scripts": {
     "dev": "pnpm run --parallel dev",
-    "format": "prettier --write \"**/*.{ts,tsx,md,json,js,jsx,sol,css}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md,json,js,jsx,sol,css}\"",
+    "deploy:backend": "fly deploy --dockerfile ./Dockerfile.backend --config ./apps/backend/fly.toml",
+    "deploy:frontend": "fly deploy --dockerfile ./Dockerfile.frontend --config ./apps/frontend/fly.toml"
   },
   "keywords": [],
   "author": "Naomi Hauret",

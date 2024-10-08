@@ -29,3 +29,12 @@ Includes the following workspaces :
 
 1. Install dependencies: `pnpm install`
 2. Launch apps: `pnpm run dev`
+
+## Deployment
+
+### Pre-requisites
+
+> Have Fly.io CLI installed and configured ; configure the secrets (environment variables) of each apps via your Fly.io project dashboard or `fly secrets set ...`
+
+- Run `pnpm deploy:backend` to deploy `apps/backend` ;
+- Run `pnpm deploy:frontend` to deploy `apps/frontend`
