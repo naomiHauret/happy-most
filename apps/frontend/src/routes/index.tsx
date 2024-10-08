@@ -28,10 +28,21 @@ const bridgeSchema = fallback(
     [BridgeSearchParams.SelectedTokenAmount]: number().optional(),
   }),
   {
+    // Default parameters values
     [BridgeSearchParams.SourceChain]: SupportedChainsAliases.HappyChainSepolia,
     [BridgeSearchParams.DestinationChain]: SupportedChainsAliases.OptimismSepolia,
   },
-)
+).transform((val) => {
+  // Basic transformation to ensure source and destination chains are different
+  if (val[BridgeSearchParams.DestinationChain] !== val[BridgeSearchParams.SourceChain]) return val
+  return {
+    ...val,
+    [BridgeSearchParams.DestinationChain]:
+      val[BridgeSearchParams.SourceChain] === SupportedChainsAliases.HappyChainSepolia
+        ? SupportedChainsAliases.OptimismSepolia
+        : SupportedChainsAliases.HappyChainSepolia,
+  }
+})
 
 export const Route = createFileRoute(AppRoutes.home)({
   component: HomeComponent,
