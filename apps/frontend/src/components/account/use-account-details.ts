@@ -21,14 +21,17 @@ function useAccountDetails() {
   const account = useAccount()
   const balance = useBalance({
     address: account?.address,
+    query: {
+      select(data) {
+        return {
+          decimals: data?.decimals,
+          value: data?.value,
+          symbol: data?.symbol,
+          formatted: `${formatUnits(data?.value, data?.decimals)}`,
+        }
+      },
+    },
   })
-
-  const formattedBalance = useMemo(() => {
-    if (balance?.data?.value) {
-      return `${formatUnits(balance?.data?.value, balance?.data?.decimals)}`
-    }
-    return '0'
-  }, [balance?.data?.value])
 
   const shortenedAddress = useMemo(() => {
     if (!account.address) return ''
@@ -41,7 +44,7 @@ function useAccountDetails() {
     return supportedChains.includes(account?.chainId)
   }, [account.chainId])
 
-  return { formattedBalance, shortenedAddress, isSupportedNetwork }
+  return { gasBalance: balance, shortenedAddress, isSupportedNetwork }
 }
 
 export { useAccountDetails }

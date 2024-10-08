@@ -2,7 +2,7 @@ import { Clipboard, Collapsible } from '@ark-ui/react'
 import { Button, recipeBox, recipeButton, type ButtonVariantsProps } from '@happy/uikit-react'
 import { type FC } from 'react'
 import { BiCheck, BiCopy, BiLinkExternal, BiPowerOff, BiSolidError } from 'react-icons/bi'
-import { useAccount, useBalance, useSwitchChain } from 'wagmi'
+import { useAccount, useSwitchChain } from 'wagmi'
 import { disconnect } from 'wagmi/actions'
 import { wagmiConfig } from '~/config'
 import { useAccountDetails } from './use-account-details'
@@ -14,7 +14,7 @@ interface AccountDetailsPanelProps {
 }
 
 /**
- * Displays currently connect wallet account information (address, balance)
+ * Displays currently connect wallet account information (address, gas balance)
  * Allow user to switch network
  * Allow user to copy their wallet address
  * Allow user to view their account details on the chain explorer
@@ -22,10 +22,7 @@ interface AccountDetailsPanelProps {
 const AccountDetailsPanel: FC<AccountDetailsPanelProps> = (props) => {
   const account = useAccount()
   const mutationSwitchChain = useSwitchChain()
-  const balance = useBalance({
-    address: account.address,
-  })
-  const { isSupportedNetwork, shortenedAddress, formattedBalance } = useAccountDetails()
+  const { isSupportedNetwork, gasBalance } = useAccountDetails()
   return (
     <div className="flex flex-col gap-2 sm:gap-1">
       <div className="relative gap-2 leading-tight flex flex-col">
@@ -112,21 +109,21 @@ const AccountDetailsPanel: FC<AccountDetailsPanelProps> = (props) => {
               )}
             </span>
             <span
-              className={`text-neutral-11/60 text-xs ${balance?.status === 'pending' && isSupportedNetwork ? 'animate-pulse' : ''}`}
+              className={`text-neutral-11/60 text-xs ${gasBalance?.status === 'pending' && isSupportedNetwork ? 'animate-pulse' : ''}`}
             >
               {isSupportedNetwork && account?.chain?.name ? (
                 <>
-                  {formattedBalance && (
+                  {gasBalance?.data && (
                     <>
                       <span className="sr-only">Your balance:</span>{' '}
                       {new Intl.NumberFormat(navigator.languages[0], {
                         maximumFractionDigits: 10,
-                      }).format(+formattedBalance)}{' '}
-                      {balance.data?.symbol}
+                      }).format(+gasBalance?.data?.formatted)}{' '}
+                      {gasBalance.data?.symbol}
                     </>
                   )}
-                  {account.address && balance?.status === 'pending' && <>Fetching balance...</>}
-                  {balance?.status === 'error' && (
+                  {account.address && gasBalance?.status === 'pending' && <>Fetching balance...</>}
+                  {gasBalance?.status === 'error' && (
                     <>
                       Couldn't fetch your {account?.chain?.nativeCurrency?.symbol ?? 'token'}{' '}
                       balance.

@@ -2,7 +2,7 @@ import { Popover } from '@ark-ui/react'
 import { recipePopover } from '@happy/uikit-react'
 import { cva } from 'class-variance-authority'
 import { type FC } from 'react'
-import { useBalance, useAccount } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { BiChevronDown, BiSolidError } from 'react-icons/bi'
 import { AccountDetailsPanel } from './current-account-details-panel'
 import { useAccountDetails } from './use-account-details'
@@ -29,10 +29,7 @@ const label = cva('p-2.5 hidden lg:flex items-center text-xs', {
  */
 const AccountDesktop: FC = () => {
   const account = useAccount()
-  const balance = useBalance({
-    address: account.address,
-  })
-  const { formattedBalance, shortenedAddress, isSupportedNetwork } = useAccountDetails()
+  const { gasBalance, shortenedAddress, isSupportedNetwork } = useAccountDetails()
   return (
     <Popover.Root>
       <Popover.Trigger className="flex items-stretch gap-1.5 lg:gap-3 [&[data-state=open]_[data-part=account-address]]:border-neutral-11/10 [&[data-state=open]_[data-part=account-address]]:text-neutral-11 [&[data-state=open]_[data-part=account-address]]:bg-mix-neutral-11 [&[data-state=open]_[data-part=account-address]]:bg-mix-amount-5">
@@ -67,27 +64,27 @@ const AccountDesktop: FC = () => {
           </span>
           <span
             className={label({
-              status: balance?.status === 'pending' ? 'pending' : 'idle',
+              status: gasBalance?.status === 'pending' ? 'pending' : 'idle',
               network: isSupportedNetwork ? 'default' : 'unsupported',
             })}
           >
             {isSupportedNetwork && account?.address ? (
               <>
-                {formattedBalance && (
+                {gasBalance?.data && (
                   <>
-                    <span className="sr-only">Your balance:</span>{' '}
+                    <span className="sr-only">Your gasBalance:</span>{' '}
                     {new Intl.NumberFormat(navigator.languages[0], {
-                      maximumSignificantDigits: 2,
-                    }).format(+formattedBalance)}{' '}
-                    {balance?.data?.symbol}
+                      maximumSignificantDigits: 6,
+                    }).format(+gasBalance?.data?.formatted)}{' '}
+                    {gasBalance?.data?.symbol}
                   </>
                 )}
-                {!balance?.data && balance?.status === 'pending' && (
+                {!gasBalance?.data && gasBalance?.status === 'pending' && (
                   <>
-                    <span className="sr-only">Fetching balance...</span>
+                    <span className="sr-only">Fetching gasBalance...</span>
                   </>
                 )}
-                {balance?.status === 'error' && (
+                {gasBalance?.status === 'error' && (
                   <>
                     <span className="sr-only">Something went wrong.</span>
                   </>
