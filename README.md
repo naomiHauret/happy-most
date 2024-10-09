@@ -28,13 +28,18 @@ Includes the following workspaces :
 > Pre-requisites: have `node` (>=21.5.0), `pnpm` installed, `bun` installed
 
 1. Install dependencies: `pnpm install`
-2. Launch apps: `pnpm run dev`
+2. In `apps/frontend` and `apps/backend`, create a `.env.local` file (or `.env.dev`, `.env`...), paste the content of `.env.dist` and replace its values with your own.
+3. Launch apps: `pnpm run dev`. The frontend app should be accessible at `localhost:5173`, the backend at `localhost:3000`.
+
+## Get test tokens
+
+A list of ERC20 tokens deployed on Optimism Sepolia and Happy Chain Testnet can be found in `packages/token-lists`.
+To get those test tokens, you can use the [dedicated endpoint in the backend](https://backend-misty-rain-4542.fly.dev/swagger#tag/default/POST/make-it-rain).
+
 
 ## Deployment
 
-### Pre-requisites
-
-> Have Fly.io CLI installed and configured ; configure the secrets (environment variables) of each apps via your Fly.io project dashboard or `fly secrets set ...`
+> You'll need to : have Fly.io CLI installed and configured ; configure the secrets (environment variables) of each apps via your Fly.io project dashboard or `fly secrets set ...`
 
 - Run `pnpm deploy:backend` to deploy `apps/backend` ;
 - Run `pnpm deploy:frontend` to deploy `apps/frontend`
