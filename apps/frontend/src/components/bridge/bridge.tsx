@@ -146,6 +146,8 @@ const Bridge: FC<BridgeProps> = (props) => {
       <form
         onSubmit={(e) => {
           e.preventDefault()
+          const data = new FormData(e.currentTarget);
+
           if (
             mutationBridgeFlow.status !== 'pending' &&
             isValid &&
@@ -155,12 +157,14 @@ const Bridge: FC<BridgeProps> = (props) => {
             amount <= +tokenBalance?.queryBalanceOf?.data?.formatted
           ) {
             handleSubmitRequest({
-              source,
-              destination,
-              tokenId: selectedToken?.key as ValidSelectedToken,
-              amount,
+              source: data.get(BridgeSearchParams.SourceChain) as SupportedChainsAliases,
+              destination: data.get(BridgeSearchParams.DestinationChain) as SupportedChainsAliases,
+              tokenId: data.get(BridgeSearchParams.SelectedToken) as ValidSelectedToken,
+              amount: Number(data.get(BridgeSearchParams.SelectedTokenAmount))
             })
           }
+
+          
         }}
         name="bridge-request"
       >
@@ -340,7 +344,7 @@ const Bridge: FC<BridgeProps> = (props) => {
         >
           <p className="font-bold">Your transaction was processed successfully !</p>
           <p className="font-medium text-neutral-12">
-            You can check your{' '}
+            Feel free to check your{' '}
             <a
               className="underline hover:no-underline focus:no-underline"
               target="_blank"
@@ -355,7 +359,7 @@ const Bridge: FC<BridgeProps> = (props) => {
               href={`${mutationBridgeFlow?.data?.burn?.block_explorer?.url}/tx/${mutationBridgeFlow?.data?.burn?.transaction_hash}`}
             >
               burn transaction
-            </a>
+            </a>.
           </p>
         </section>
       )}
