@@ -36,7 +36,6 @@ Includes the following workspaces :
 A list of ERC20 tokens deployed on Optimism Sepolia and Happy Chain Testnet can be found in `packages/token-lists`.
 To get those test tokens, you can use the [dedicated endpoint in the backend](https://backend-misty-rain-4542.fly.dev/swagger#tag/default/POST/make-it-rain).
 
-
 ## Deployment
 
 > You'll need to : have Fly.io CLI installed and configured ; configure the secrets (environment variables) of each apps via your Fly.io project dashboard or `fly secrets set ...`

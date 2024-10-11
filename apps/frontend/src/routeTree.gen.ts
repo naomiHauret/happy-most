@@ -11,10 +11,16 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as WithJotaiImport } from './routes/with-jotai'
 import { Route as TransactionsImport } from './routes/transactions'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
+
+const WithJotaiRoute = WithJotaiImport.update({
+  path: '/with-jotai',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const TransactionsRoute = TransactionsImport.update({
   path: '/transactions',
@@ -44,6 +50,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TransactionsImport
       parentRoute: typeof rootRoute
     }
+    '/with-jotai': {
+      id: '/with-jotai'
+      path: '/with-jotai'
+      fullPath: '/with-jotai'
+      preLoaderRoute: typeof WithJotaiImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -52,36 +65,41 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/transactions': typeof TransactionsRoute
+  '/with-jotai': typeof WithJotaiRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/transactions': typeof TransactionsRoute
+  '/with-jotai': typeof WithJotaiRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/transactions': typeof TransactionsRoute
+  '/with-jotai': typeof WithJotaiRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/transactions'
+  fullPaths: '/' | '/transactions' | '/with-jotai'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/transactions'
-  id: '__root__' | '/' | '/transactions'
+  to: '/' | '/transactions' | '/with-jotai'
+  id: '__root__' | '/' | '/transactions' | '/with-jotai'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   TransactionsRoute: typeof TransactionsRoute
+  WithJotaiRoute: typeof WithJotaiRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   TransactionsRoute: TransactionsRoute,
+  WithJotaiRoute: WithJotaiRoute,
 }
 
 export const routeTree = rootRoute
@@ -97,7 +115,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/transactions"
+        "/transactions",
+        "/with-jotai"
       ]
     },
     "/": {
@@ -105,6 +124,9 @@ export const routeTree = rootRoute
     },
     "/transactions": {
       "filePath": "transactions.tsx"
+    },
+    "/with-jotai": {
+      "filePath": "with-jotai.tsx"
     }
   }
 }

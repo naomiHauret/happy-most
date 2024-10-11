@@ -1,26 +1,17 @@
+import abiSimpleERC2O from '@happy/abis/SimpleERC20'
 import { SUPPORTED_CHAINS, SupportedChainsAliases } from '@happy/chains'
-import tokenList from '@happy/token-lists/bridge'
 import { type DialogProps, Button, Callout, Input, recipeBox } from '@happy/uikit-react'
 import { type LegacyRef, useEffect, useRef, type FC } from 'react'
-import { TbArrowsExchange2 } from 'react-icons/tb'
-import { useAccount, useSimulateContract } from 'wagmi'
 import { BiChevronDown } from 'react-icons/bi'
-import { type URLSearchParamsControlledInput } from '../url-search-params-controlled-input'
-import { useAccountDetails } from '../account/use-account-details'
-import { useRequestBridge, type ValidSelectedToken } from './use-request-bridge'
-import { useSelectedTokenDetails } from './use-selected-token-details'
-import abiSimpleERC2O from '@happy/abis/SimpleERC20'
+import { TbArrowsExchange2 } from 'react-icons/tb'
 import { parseUnits } from 'viem'
+import { useAccount, useSimulateContract } from 'wagmi'
+import { useAccountDetails } from '../account/use-account-details'
+import { type URLSearchParamsControlledInput } from '../url-search-params-controlled-input'
+import { BridgeSearchParams, type TokenInfo, type ValidSelectedToken } from './helpers'
 import { TransactionFlowSummary } from './transaction-summary'
-
-enum BridgeSearchParams {
-  SourceChain = 'bridge-source',
-  DestinationChain = 'bridge-destination',
-  QueryToken = 'bridge-query-search-token',
-  SelectedToken = 'bridge-selected-token',
-  SelectedTokenAmount = 'bridge-selected-token-amount',
-}
-type TokenInfo = (typeof tokenList.tokenMap)[ValidSelectedToken]
+import { useRequestBridge } from './use-request-bridge'
+import { useSelectedTokenDetails } from './use-selected-token-details'
 
 interface CardChainProps {
   flowIndication: string
@@ -146,25 +137,29 @@ const Bridge: FC<BridgeProps> = (props) => {
       <form
         onSubmit={(e) => {
           e.preventDefault()
-          const data = new FormData(e.currentTarget);
+          const data = new FormData(e.currentTarget)
+          const source = data.get(BridgeSearchParams.SourceChain) as SupportedChainsAliases
+          const destination = data.get(
+            BridgeSearchParams.DestinationChain,
+          ) as SupportedChainsAliases
+          const tokenId = data.get(BridgeSearchParams.SelectedToken) as ValidSelectedToken
+          const tokenAmount = Number(data.get(BridgeSearchParams.SelectedTokenAmount))
 
           if (
             mutationBridgeFlow.status !== 'pending' &&
             isValid &&
-            amount &&
-            amount > 0 &&
+            tokenAmount &&
+            tokenAmount > 0 &&
             tokenBalance?.queryBalanceOf?.data &&
-            amount <= +tokenBalance?.queryBalanceOf?.data?.formatted
+            tokenAmount <= +tokenBalance?.queryBalanceOf?.data?.formatted
           ) {
             handleSubmitRequest({
-              source: data.get(BridgeSearchParams.SourceChain) as SupportedChainsAliases,
-              destination: data.get(BridgeSearchParams.DestinationChain) as SupportedChainsAliases,
-              tokenId: data.get(BridgeSearchParams.SelectedToken) as ValidSelectedToken,
-              amount: Number(data.get(BridgeSearchParams.SelectedTokenAmount))
+              source,
+              destination,
+              tokenId,
+              amount: tokenAmount,
             })
           }
-
-          
         }}
         name="bridge-request"
       >
@@ -176,7 +171,15 @@ const Bridge: FC<BridgeProps> = (props) => {
               className="transition-all active:bg-primary-12/10 active:!text-primary-10 active:!border-primary-11/50 relative z-10 !bg-base my-auto min-w-8 justify-center !p-[unset] -mx-3 aspect-square !rounded-full"
               intent="outline"
               aria-label="Click to switch up source chain and destination chain"
-              onClick={handleOnSwitchUpChains}
+              onClick={() => {
+                if (mutationBridgeFlow.status !== 'pending') {
+                  mutationBridgeFlow.reset()
+                  mutationBurnTokens.reset()
+                  mutationSendBridgeRequest.reset()
+                  mutationSwitchChain.reset()
+                  handleOnSwitchUpChains()
+                }
+              }}
             >
               <TbArrowsExchange2 />
             </Button>
@@ -263,34 +266,35 @@ const Bridge: FC<BridgeProps> = (props) => {
               </div>
             </div>
           </div>
-
           <input
             readOnly
-            defaultValue={selectedToken?.key}
+            value={selectedToken?.key ?? ''}
             name={BridgeSearchParams.SelectedToken}
             id={BridgeSearchParams.SelectedToken}
             type="text"
             hidden
             aria-disabled="true"
+            required
           />
-
           <input
             readOnly
-            defaultValue={source}
+            value={source}
             name={BridgeSearchParams.SourceChain}
             id={BridgeSearchParams.SourceChain}
             type="text"
             hidden
             aria-disabled="true"
+            required
           />
           <input
             readOnly
-            defaultValue={destination}
+            value={destination}
             name={BridgeSearchParams.DestinationChain}
             id={BridgeSearchParams.DestinationChain}
             type="text"
             hidden
             aria-disabled="true"
+            required
           />
         </div>
         <input
@@ -359,7 +363,8 @@ const Bridge: FC<BridgeProps> = (props) => {
               href={`${mutationBridgeFlow?.data?.burn?.block_explorer?.url}/tx/${mutationBridgeFlow?.data?.burn?.transaction_hash}`}
             >
               burn transaction
-            </a>.
+            </a>
+            .
           </p>
         </section>
       )}

@@ -6,8 +6,8 @@ import { useEffect } from 'react'
 import { parseUnits } from 'viem'
 import { useAccount, useSwitchChain, useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
 import { apiClient } from '~/services/@happy/client'
+import { type ValidSelectedToken } from './helpers'
 
-type ValidSelectedToken = keyof typeof tokenList.tokenMap
 type BridgeRequestCommonParams = {
   source: SupportedChainsAliases
   destination: SupportedChainsAliases
@@ -170,4 +170,4 @@ function useRequestBridge(args: UseRequestBridgeArgs) {
   }
 }
 
-export { useRequestBridge, type ValidSelectedToken }
+export { useRequestBridge }

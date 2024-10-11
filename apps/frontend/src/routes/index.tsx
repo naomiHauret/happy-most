@@ -25,7 +25,7 @@ const bridgeSchema = fallback(
     ).default(SupportedChainsAliases.OptimismSepolia),
     [BridgeSearchParams.QueryToken]: string().optional(),
     [BridgeSearchParams.SelectedToken]: string().optional(),
-    [BridgeSearchParams.SelectedTokenAmount]: number().optional(),
+    [BridgeSearchParams.SelectedTokenAmount]: number().positive().optional(),
   }),
   {
     // Default parameters values

@@ -51,10 +51,10 @@ const TransactionFlowSummary: FC<TransactionFlowSummaryProps> = (props) => {
         layer: '0',
         demarcation: 'subtle',
         class:
-          'border-t border-neutral-11/10 divide-y [&_li]:px-2 [&_li]:py-2  divide-neutral-11/10 text-xs',
+          'border-t border-neutral-11/10 divide-y [&_li]:px-2 [&_li]:py-2 [&_li]:w-full divide-neutral-11/10 text-xs',
       })}
     >
-      {shouldSwitchChain && (
+      {(shouldSwitchChain || ['success', 'error'].includes(mutationSwitchChain.status)) && (
         <li
           className={labelActionLine({
             status: mutationSwitchChain.status === 'idle' ? 'idle' : 'default',
